@@ -1,0 +1,468 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3508C8EF1C75A2D000CA10B3 /* HabiticaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3508C8EE1C75A2D000CA10B3 /* HabiticaClient.swift */; };
+		3545DFD01C6846AD00B92A68 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3545DFCF1C6846AD00B92A68 /* AppDelegate.swift */; };
+		3545DFD21C6846AD00B92A68 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3545DFD11C6846AD00B92A68 /* LoginViewController.swift */; };
+		3545DFD51C6846AD00B92A68 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3545DFD31C6846AD00B92A68 /* Main.storyboard */; };
+		3545DFD71C6846AD00B92A68 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3545DFD61C6846AD00B92A68 /* Images.xcassets */; };
+		3545DFDA1C6846AD00B92A68 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3545DFD81C6846AD00B92A68 /* LaunchScreen.xib */; };
+		3545DFE61C6846AD00B92A68 /* HabitMakerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3545DFE51C6846AD00B92A68 /* HabitMakerTests.swift */; };
+		35C74CD21C75A3CC002EF958 /* HabiticaConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C74CD11C75A3CC002EF958 /* HabiticaConstants.swift */; settings = {ASSET_TAGS = (); }; };
+		35C74CD41C75A3F4002EF958 /* HabiticaConvenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C74CD31C75A3F3002EF958 /* HabiticaConvenience.swift */; settings = {ASSET_TAGS = (); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3545DFE01C6846AD00B92A68 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3545DFC21C6846AD00B92A68 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3545DFC91C6846AD00B92A68;
+			remoteInfo = HabitMaker;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		3508C8EE1C75A2D000CA10B3 /* HabiticaClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HabiticaClient.swift; path = Model/HabiticaClient.swift; sourceTree = "<group>"; };
+		3545DFCA1C6846AD00B92A68 /* HabitMaker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HabitMaker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3545DFCE1C6846AD00B92A68 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3545DFCF1C6846AD00B92A68 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		3545DFD11C6846AD00B92A68 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		3545DFD41C6846AD00B92A68 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		3545DFD61C6846AD00B92A68 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		3545DFD91C6846AD00B92A68 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		3545DFDF1C6846AD00B92A68 /* HabitMakerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HabitMakerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3545DFE41C6846AD00B92A68 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3545DFE51C6846AD00B92A68 /* HabitMakerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitMakerTests.swift; sourceTree = "<group>"; };
+		35C74CD11C75A3CC002EF958 /* HabiticaConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HabiticaConstants.swift; path = Model/HabiticaConstants.swift; sourceTree = "<group>"; };
+		35C74CD31C75A3F3002EF958 /* HabiticaConvenience.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HabiticaConvenience.swift; path = Model/HabiticaConvenience.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3545DFC71C6846AD00B92A68 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3545DFDC1C6846AD00B92A68 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3508C8EB1C75A27A00CA10B3 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				3508C8EE1C75A2D000CA10B3 /* HabiticaClient.swift */,
+				35C74CD11C75A3CC002EF958 /* HabiticaConstants.swift */,
+				35C74CD31C75A3F3002EF958 /* HabiticaConvenience.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		3545DFC11C6846AD00B92A68 = {
+			isa = PBXGroup;
+			children = (
+				3545DFCC1C6846AD00B92A68 /* HabitMaker */,
+				3545DFE21C6846AD00B92A68 /* HabitMakerTests */,
+				3545DFCB1C6846AD00B92A68 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3545DFCB1C6846AD00B92A68 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3545DFCA1C6846AD00B92A68 /* HabitMaker.app */,
+				3545DFDF1C6846AD00B92A68 /* HabitMakerTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3545DFCC1C6846AD00B92A68 /* HabitMaker */ = {
+			isa = PBXGroup;
+			children = (
+				3508C8EB1C75A27A00CA10B3 /* Model */,
+				35C74CD61C76EB49002EF958 /* View */,
+				35C74CD51C76EAE7002EF958 /* Controller */,
+				3545DFCF1C6846AD00B92A68 /* AppDelegate.swift */,
+				3545DFD61C6846AD00B92A68 /* Images.xcassets */,
+				3545DFD81C6846AD00B92A68 /* LaunchScreen.xib */,
+				3545DFCD1C6846AD00B92A68 /* Supporting Files */,
+			);
+			path = HabitMaker;
+			sourceTree = "<group>";
+		};
+		3545DFCD1C6846AD00B92A68 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				3545DFCE1C6846AD00B92A68 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		3545DFE21C6846AD00B92A68 /* HabitMakerTests */ = {
+			isa = PBXGroup;
+			children = (
+				3545DFE51C6846AD00B92A68 /* HabitMakerTests.swift */,
+				3545DFE31C6846AD00B92A68 /* Supporting Files */,
+			);
+			path = HabitMakerTests;
+			sourceTree = "<group>";
+		};
+		3545DFE31C6846AD00B92A68 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				3545DFE41C6846AD00B92A68 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		35C74CD51C76EAE7002EF958 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				3545DFD11C6846AD00B92A68 /* LoginViewController.swift */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
+		35C74CD61C76EB49002EF958 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				3545DFD31C6846AD00B92A68 /* Main.storyboard */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3545DFC91C6846AD00B92A68 /* HabitMaker */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3545DFE91C6846AD00B92A68 /* Build configuration list for PBXNativeTarget "HabitMaker" */;
+			buildPhases = (
+				3545DFC61C6846AD00B92A68 /* Sources */,
+				3545DFC71C6846AD00B92A68 /* Frameworks */,
+				3545DFC81C6846AD00B92A68 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HabitMaker;
+			productName = HabitMaker;
+			productReference = 3545DFCA1C6846AD00B92A68 /* HabitMaker.app */;
+			productType = "com.apple.product-type.application";
+		};
+		3545DFDE1C6846AD00B92A68 /* HabitMakerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3545DFEC1C6846AD00B92A68 /* Build configuration list for PBXNativeTarget "HabitMakerTests" */;
+			buildPhases = (
+				3545DFDB1C6846AD00B92A68 /* Sources */,
+				3545DFDC1C6846AD00B92A68 /* Frameworks */,
+				3545DFDD1C6846AD00B92A68 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3545DFE11C6846AD00B92A68 /* PBXTargetDependency */,
+			);
+			name = HabitMakerTests;
+			productName = HabitMakerTests;
+			productReference = 3545DFDF1C6846AD00B92A68 /* HabitMakerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3545DFC21C6846AD00B92A68 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0700;
+				LastUpgradeCheck = 0700;
+				ORGANIZATIONNAME = SarahHowe;
+				TargetAttributes = {
+					3545DFC91C6846AD00B92A68 = {
+						CreatedOnToolsVersion = 6.4;
+					};
+					3545DFDE1C6846AD00B92A68 = {
+						CreatedOnToolsVersion = 6.4;
+						TestTargetID = 3545DFC91C6846AD00B92A68;
+					};
+				};
+			};
+			buildConfigurationList = 3545DFC51C6846AD00B92A68 /* Build configuration list for PBXProject "HabitMaker" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 3545DFC11C6846AD00B92A68;
+			productRefGroup = 3545DFCB1C6846AD00B92A68 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3545DFC91C6846AD00B92A68 /* HabitMaker */,
+				3545DFDE1C6846AD00B92A68 /* HabitMakerTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3545DFC81C6846AD00B92A68 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3545DFD51C6846AD00B92A68 /* Main.storyboard in Resources */,
+				3545DFDA1C6846AD00B92A68 /* LaunchScreen.xib in Resources */,
+				3545DFD71C6846AD00B92A68 /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3545DFDD1C6846AD00B92A68 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3545DFC61C6846AD00B92A68 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				35C74CD21C75A3CC002EF958 /* HabiticaConstants.swift in Sources */,
+				3545DFD21C6846AD00B92A68 /* LoginViewController.swift in Sources */,
+				35C74CD41C75A3F4002EF958 /* HabiticaConvenience.swift in Sources */,
+				3508C8EF1C75A2D000CA10B3 /* HabiticaClient.swift in Sources */,
+				3545DFD01C6846AD00B92A68 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3545DFDB1C6846AD00B92A68 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3545DFE61C6846AD00B92A68 /* HabitMakerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3545DFE11C6846AD00B92A68 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3545DFC91C6846AD00B92A68 /* HabitMaker */;
+			targetProxy = 3545DFE01C6846AD00B92A68 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		3545DFD31C6846AD00B92A68 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3545DFD41C6846AD00B92A68 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		3545DFD81C6846AD00B92A68 /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3545DFD91C6846AD00B92A68 /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		3545DFE71C6846AD00B92A68 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		3545DFE81C6846AD00B92A68 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		3545DFEA1C6846AD00B92A68 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = HabitMaker/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.SarahHowe.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		3545DFEB1C6846AD00B92A68 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = HabitMaker/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.SarahHowe.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		3545DFED1C6846AD00B92A68 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = HabitMakerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.SarahHowe.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HabitMaker.app/HabitMaker";
+			};
+			name = Debug;
+		};
+		3545DFEE1C6846AD00B92A68 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = HabitMakerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.SarahHowe.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HabitMaker.app/HabitMaker";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3545DFC51C6846AD00B92A68 /* Build configuration list for PBXProject "HabitMaker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3545DFE71C6846AD00B92A68 /* Debug */,
+				3545DFE81C6846AD00B92A68 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3545DFE91C6846AD00B92A68 /* Build configuration list for PBXNativeTarget "HabitMaker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3545DFEA1C6846AD00B92A68 /* Debug */,
+				3545DFEB1C6846AD00B92A68 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3545DFEC1C6846AD00B92A68 /* Build configuration list for PBXNativeTarget "HabitMakerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3545DFED1C6846AD00B92A68 /* Debug */,
+				3545DFEE1C6846AD00B92A68 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3545DFC21C6846AD00B92A68 /* Project object */;
+}
