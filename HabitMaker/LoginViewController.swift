@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class LoginViewController: UIViewController, UITextFieldDelegate {
     
@@ -22,7 +23,19 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     var appDelegate: AppDelegate!
     var session: NSURLSession!
     
+    var currentUUID: String? = nil
+    var currentApiKey: String? = nil
+    
     //var tapRecognizer: UITapGestureRecognizer? = nil
+    
+    //MARK -- Keys for UserDefaults
+    
+    struct UserDefaultKeys
+    {
+        static let UUID = "uuid"
+        static let ApiKey = "apiKey"
+        static let UserLoginAvailable = "userLoginAvailable"
+    }
     
     //MARK -- Lifecycle
     
@@ -58,6 +71,18 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
         //initialize tap recognizer
         
+        //check to see if a login is already stored and if so, go ahead and advance to the next view
+        let userLoginAvailable = NSUserDefaults.standardUserDefaults().boolForKey(UserDefaultKeys.UserLoginAvailable)
+        
+        if(userLoginAvailable)
+        {
+            print("a user login is available")
+            currentUUID = NSUserDefaults.standardUserDefaults().valueForKey(UserDefaultKeys.UUID) as? String
+            uuidTextField.text = currentUUID!
+            currentApiKey = NSUserDefaults.standardUserDefaults().valueForKey(UserDefaultKeys.ApiKey) as? String
+            apiKeyTextField.text = currentApiKey!
+        }
+        
     }
     
     override func viewWillAppear(animated: Bool)
@@ -79,26 +104,40 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         super.didReceiveMemoryWarning()
     }*/
     
+    //MARK -- Core Data
+    
+    var sharedContext: NSManagedObjectContext {
+        return CoreDataStackManager.sharedInstance().managedObjectContext
+    }
     
     //MARK -- Actions
     
-    @IBAction func loginToHabitica(sender: UIButton)
+    @IBAction func loginButtonPressed(sender: UIButton)
     {
-        HabiticaClient.sharedInstance.getTasks(uuidTextField.text!, apiKey: apiKeyTextField.text!) { message, error in
+        HabiticaClient.sharedInstance.getTasks(uuidTextField.text!, apiKey: apiKeyTextField.text!) { dailyTasks, weeklyTasks, error in
             
             if let error = error
             {
-                print("Login failed: \(message)")
-                
                 //get the description of the specific error that results from the failed request
                 let failureString = error.localizedDescription
                 print("Login Description \(failureString)")
             }
             else
             {
-                print("Login Complete! \(message)")
+                print("Login Complete!")
+                NSUserDefaults.standardUserDefaults().setValue(self.uuidTextField.text, forKey: UserDefaultKeys.UUID)
+                self.currentUUID = self.uuidTextField.text
+                NSUserDefaults.standardUserDefaults().setValue(self.apiKeyTextField.text, forKey: UserDefaultKeys.ApiKey)
+                self.currentApiKey = self.apiKeyTextField.text
+                NSUserDefaults.standardUserDefaults().setBool(true, forKey: UserDefaultKeys.UserLoginAvailable)
+                //self.loginToHabitica()
             }
         }
     }
+    
+    /*func loginToHabitica()
+    {
+        
+    }*/
 }
 
