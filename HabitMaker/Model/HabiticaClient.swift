@@ -16,6 +16,10 @@ class HabiticaClient : NSObject {
     //shared session
     var session: NSURLSession
     
+    //shared task arrays
+    var dailyTasks = NSSet()
+    var weeklyTasks = NSSet()
+    
     override init()
     {
         session = NSURLSession.sharedSession()
@@ -63,7 +67,7 @@ class HabiticaClient : NSObject {
     {
         if let parsedResult = (try? NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)) as? [String : AnyObject]
         {
-            if let errorMessage = parsedResult[HabiticaClient.JSONResponseKeys.STATUS] as? String
+            if let errorMessage = parsedResult[HabiticaClient.JSONResponseKeys.ERROR_MESSAGE] as? String
             {
                 let userInfo = [NSLocalizedDescriptionKey : errorMessage]
                 

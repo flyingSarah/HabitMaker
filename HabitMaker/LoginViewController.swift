@@ -130,14 +130,14 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 NSUserDefaults.standardUserDefaults().setValue(self.apiKeyTextField.text, forKey: UserDefaultKeys.ApiKey)
                 self.currentApiKey = self.apiKeyTextField.text
                 NSUserDefaults.standardUserDefaults().setBool(true, forKey: UserDefaultKeys.UserLoginAvailable)
-                //self.loginToHabitica()
+                self.loginToHabitica(dailyTasks!, weeklyTasks: weeklyTasks!)
             }
         }
     }
     
-    /*func loginToHabitica()
+    func loginToHabitica(dailyTasks: NSSet, weeklyTasks: NSSet)
     {
         
-    }*/
+    }
 }
 

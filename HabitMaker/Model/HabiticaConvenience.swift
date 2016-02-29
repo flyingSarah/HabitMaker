@@ -25,50 +25,23 @@ extension HabiticaClient {
             {
                 if let taskArray = JSONResult as? [[String : AnyObject]]
                 {
-                    var dailyTasks = NSSet()
                     
-                    for task in taskArray
+                    if(taskArray.count > 0)
                     {
-                        if let habiticaType = task["type"] as? String
-                        {
-                            //print("habitica type found: \(habiticaType)")
-                            
-                            if(habiticaType == "daily")
-                            {
-                                if let weekRepeatArray = task["repeat"] as? [String : Bool]
-                                {
-                                    var countDaysToRepeat = 0
-                                    for day in weekRepeatArray
-                                    {
-                                        if(day.1)
-                                        {
-                                            countDaysToRepeat++
-                                        }
-                                    }
-                                    
-                                    if(countDaysToRepeat == 7)
-                                    {
-                                        dailyTasks = dailyTasks.setByAddingObject(task)
-                                    }
-                                }
-                                else
-                                {
-                                    print("task parse error: couldn't find 'repeat' in task and convert it to [string:bool]")
-                                }
-                            }
-                        }
-                        else
-                        {
-                            print("task parse error: couldn't find 'type' in task")
-                        }
+                        print("Successuflly found \(taskArray.count) total tasks from Habitica")
+                        
+                        let dailyTasks = RepeatingTask.dailyTasksFromResults(taskArray)
+                        let weeklyTasks = RepeatingTask.weeklyTasksFromResults(taskArray)
+                        
+                        //print("\n\ndaily tasks:\n\n\(dailyTasks)\n\n")
+                        HabiticaClient.sharedInstance.dailyTasks = dailyTasks
+                        HabiticaClient.sharedInstance.weeklyTasks = weeklyTasks
+                        completionHandler(dailyTasks: dailyTasks, weeklyTasks: weeklyTasks, error: nil)
                     }
-                    
-                    //print("\n\ndaily tasks:\n\n\(dailyTasks)\n\n")
-                    completionHandler(dailyTasks: dailyTasks, weeklyTasks: nil, error: nil)
                 }
                 else
                 {
-                    print("task parse error: couldn't convert result to task array")
+                    print("task parse error: task results were nil")
                 }
             }
         }

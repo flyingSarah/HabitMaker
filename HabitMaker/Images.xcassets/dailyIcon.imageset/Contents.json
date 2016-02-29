@@ -2,18 +2,18 @@
   "images" : [
     {
       "idiom" : "universal",
-      "scale" : "1x",
-      "filename" : "repeating_task_x20.png"
+      "filename" : "daily_x20.png",
+      "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "scale" : "2x",
-      "filename" : "repeating_task_x40.png"
+      "filename" : "daily_x40.png",
+      "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "scale" : "3x",
-      "filename" : "repeating_task_x80.png"
+      "filename" : "daily_x80.png",
+      "scale" : "3x"
     }
   ],
   "info" : {

@@ -14,6 +14,7 @@
 		3545DFD71C6846AD00B92A68 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3545DFD61C6846AD00B92A68 /* Images.xcassets */; };
 		3545DFDA1C6846AD00B92A68 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3545DFD81C6846AD00B92A68 /* LaunchScreen.xib */; };
 		3545DFE61C6846AD00B92A68 /* HabitMakerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3545DFE51C6846AD00B92A68 /* HabitMakerTests.swift */; };
+		35B912571C82DAFE004798BC /* RepeatingTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B912561C82DAFE004798BC /* RepeatingTask.swift */; settings = {ASSET_TAGS = (); }; };
 		35C74CD21C75A3CC002EF958 /* HabiticaConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C74CD11C75A3CC002EF958 /* HabiticaConstants.swift */; settings = {ASSET_TAGS = (); }; };
 		35C74CD41C75A3F4002EF958 /* HabiticaConvenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C74CD31C75A3F3002EF958 /* HabiticaConvenience.swift */; settings = {ASSET_TAGS = (); }; };
 		35F480A71C818C2F00825F2D /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 35F480A51C818C2F00825F2D /* Model.xcdatamodeld */; settings = {ASSET_TAGS = (); }; };
@@ -42,6 +43,7 @@
 		3545DFDF1C6846AD00B92A68 /* HabitMakerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HabitMakerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3545DFE41C6846AD00B92A68 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3545DFE51C6846AD00B92A68 /* HabitMakerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitMakerTests.swift; sourceTree = "<group>"; };
+		35B912561C82DAFE004798BC /* RepeatingTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RepeatingTask.swift; path = Model/RepeatingTask.swift; sourceTree = "<group>"; };
 		35C74CD11C75A3CC002EF958 /* HabiticaConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HabiticaConstants.swift; path = Model/HabiticaConstants.swift; sourceTree = "<group>"; };
 		35C74CD31C75A3F3002EF958 /* HabiticaConvenience.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HabiticaConvenience.swift; path = Model/HabiticaConvenience.swift; sourceTree = "<group>"; };
 		35F480A61C818C2F00825F2D /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 		3508C8EB1C75A27A00CA10B3 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				35B912561C82DAFE004798BC /* RepeatingTask.swift */,
 				35F480A51C818C2F00825F2D /* Model.xcdatamodeld */,
 				35F480A81C818CD000825F2D /* CoreDataStackManager.swift */,
 				3508C8EE1C75A2D000CA10B3 /* HabiticaClient.swift */,
@@ -252,6 +255,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				35B912571C82DAFE004798BC /* RepeatingTask.swift in Sources */,
 				35C74CD21C75A3CC002EF958 /* HabiticaConstants.swift in Sources */,
 				3545DFD21C6846AD00B92A68 /* LoginViewController.swift in Sources */,
 				35C74CD41C75A3F4002EF958 /* HabiticaConvenience.swift in Sources */,
