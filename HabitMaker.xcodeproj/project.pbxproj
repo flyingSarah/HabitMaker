@@ -19,6 +19,9 @@
 		35C74CD41C75A3F4002EF958 /* HabiticaConvenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C74CD31C75A3F3002EF958 /* HabiticaConvenience.swift */; settings = {ASSET_TAGS = (); }; };
 		35F480A71C818C2F00825F2D /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 35F480A51C818C2F00825F2D /* Model.xcdatamodeld */; settings = {ASSET_TAGS = (); }; };
 		35F480A91C818CD000825F2D /* CoreDataStackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F480A81C818CD000825F2D /* CoreDataStackManager.swift */; settings = {ASSET_TAGS = (); }; };
+		35F5F9ED1C880B4D001F6B45 /* WeeklyTasksController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F5F9EC1C880B4D001F6B45 /* WeeklyTasksController.swift */; settings = {ASSET_TAGS = (); }; };
+		35F5F9EF1C880B65001F6B45 /* DailyTasksController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F5F9EE1C880B65001F6B45 /* DailyTasksController.swift */; settings = {ASSET_TAGS = (); }; };
+		35F5F9F11C881EDE001F6B45 /* TaskTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F5F9F01C881EDE001F6B45 /* TaskTableCell.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +51,9 @@
 		35C74CD31C75A3F3002EF958 /* HabiticaConvenience.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HabiticaConvenience.swift; path = Model/HabiticaConvenience.swift; sourceTree = "<group>"; };
 		35F480A61C818C2F00825F2D /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		35F480A81C818CD000825F2D /* CoreDataStackManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CoreDataStackManager.swift; path = Model/CoreDataStackManager.swift; sourceTree = "<group>"; };
+		35F5F9EC1C880B4D001F6B45 /* WeeklyTasksController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WeeklyTasksController.swift; path = Controller/WeeklyTasksController.swift; sourceTree = "<group>"; };
+		35F5F9EE1C880B65001F6B45 /* DailyTasksController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DailyTasksController.swift; path = Controller/DailyTasksController.swift; sourceTree = "<group>"; };
+		35F5F9F01C881EDE001F6B45 /* TaskTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TaskTableCell.swift; path = View/TaskTableCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,6 +148,8 @@
 			isa = PBXGroup;
 			children = (
 				3545DFD11C6846AD00B92A68 /* LoginViewController.swift */,
+				35F5F9EC1C880B4D001F6B45 /* WeeklyTasksController.swift */,
+				35F5F9EE1C880B65001F6B45 /* DailyTasksController.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -150,6 +158,7 @@
 			isa = PBXGroup;
 			children = (
 				3545DFD31C6846AD00B92A68 /* Main.storyboard */,
+				35F5F9F01C881EDE001F6B45 /* TaskTableCell.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -259,7 +268,10 @@
 				35C74CD21C75A3CC002EF958 /* HabiticaConstants.swift in Sources */,
 				3545DFD21C6846AD00B92A68 /* LoginViewController.swift in Sources */,
 				35C74CD41C75A3F4002EF958 /* HabiticaConvenience.swift in Sources */,
+				35F5F9F11C881EDE001F6B45 /* TaskTableCell.swift in Sources */,
+				35F5F9EF1C880B65001F6B45 /* DailyTasksController.swift in Sources */,
 				35F480A91C818CD000825F2D /* CoreDataStackManager.swift in Sources */,
+				35F5F9ED1C880B4D001F6B45 /* WeeklyTasksController.swift in Sources */,
 				3508C8EF1C75A2D000CA10B3 /* HabiticaClient.swift in Sources */,
 				3545DFD01C6846AD00B92A68 /* AppDelegate.swift in Sources */,
 				35F480A71C818C2F00825F2D /* Model.xcdatamodeld in Sources */,

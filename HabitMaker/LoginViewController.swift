@@ -124,20 +124,31 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             }
             else
             {
+                dispatch_async(dispatch_get_main_queue(), {
+                    
+                    CoreDataStackManager.sharedInstance().saveContext()
+                })
+                
                 print("Login Complete!")
                 NSUserDefaults.standardUserDefaults().setValue(self.uuidTextField.text, forKey: UserDefaultKeys.UUID)
                 self.currentUUID = self.uuidTextField.text
                 NSUserDefaults.standardUserDefaults().setValue(self.apiKeyTextField.text, forKey: UserDefaultKeys.ApiKey)
                 self.currentApiKey = self.apiKeyTextField.text
                 NSUserDefaults.standardUserDefaults().setBool(true, forKey: UserDefaultKeys.UserLoginAvailable)
-                self.loginToHabitica(dailyTasks!, weeklyTasks: weeklyTasks!)
+                
+                self.loginToHabitica()
             }
         }
     }
     
-    func loginToHabitica(dailyTasks: NSSet, weeklyTasks: NSSet)
+    func loginToHabitica()
     {
-        
+        print("loading tab bar view...")
+        dispatch_async(dispatch_get_main_queue(), {
+            
+            let controller = self.storyboard!.instantiateViewControllerWithIdentifier("TabBarController") as! UITabBarController
+            self.presentViewController(controller, animated: true, completion: nil)
+        })
     }
 }
 
