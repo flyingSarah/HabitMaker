@@ -1,18 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9525" systemVersion="14F27" minimumToolsVersion="Xcode 7.0">
-    <entity name="DailyTask" representedClassName=".DailyTask" syncable="YES">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="8195" systemVersion="14F27" minimumToolsVersion="Xcode 7.0">
+    <entity name="RepeatingTask" representedClassName=".RepeatingTask" syncable="YES">
         <attribute name="completed" attributeType="Boolean" syncable="YES"/>
         <attribute name="id" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="notes" attributeType="String" syncable="YES"/>
-        <attribute name="numFinRepeats" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
-        <attribute name="numRepeats" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
-        <attribute name="priority" attributeType="Double" defaultValueString="0" syncable="YES"/>
-        <attribute name="streak" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
-        <attribute name="text" attributeType="String" syncable="YES"/>
-    </entity>
-    <entity name="WeeklyTask" representedClassName=".WeeklyTask" syncable="YES">
-        <attribute name="completed" attributeType="Boolean" syncable="YES"/>
-        <attribute name="id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isDaily" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="notes" attributeType="String" syncable="YES"/>
         <attribute name="numFinRepeats" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="numRepeats" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
@@ -21,7 +12,6 @@
         <attribute name="text" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="DailyTask" positionX="-63" positionY="-18" width="128" height="165"/>
-        <element name="WeeklyTask" positionX="-63" positionY="45" width="128" height="165"/>
+        <element name="RepeatingTask" positionX="-63" positionY="-18" width="128" height="180"/>
     </elements>
 </model>

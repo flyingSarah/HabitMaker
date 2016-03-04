@@ -1,5 +1,5 @@
 //
-//  WeeklyTasksController.swift
+//  RepeatingTasksController.swift
 //  HabitMaker
 //
 //  Created by Sarah Howe on 3/2/16.
@@ -10,13 +10,13 @@
 import UIKit
 import CoreData
 
-class WeeklyTasksController: UITableViewController, NSFetchedResultsControllerDelegate {
+class RepeatingTaskController: UITableViewController, NSFetchedResultsControllerDelegate {
     
     //MARK -- Outlets
     @IBOutlet var taskTable: UITableView!
     
     //MARK -- Useful Variables
-    
+    var isDailyView = false
     
     //MARK -- Lifecycle
     
@@ -24,7 +24,13 @@ class WeeklyTasksController: UITableViewController, NSFetchedResultsControllerDe
     {
         super.viewDidLoad()
         
-        print("loading weekly tasks...")
+        print("loading \(navigationItem.title!)...")
+        
+        //set which view we are controlling
+        if(navigationItem.title! == "Daily Tasks")
+        {
+            isDailyView = true
+        }
         
         //create the needed bar button items
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("logout:"))
@@ -62,9 +68,10 @@ class WeeklyTasksController: UITableViewController, NSFetchedResultsControllerDe
     
     lazy var fetchedResultsController: NSFetchedResultsController = {
         
-        let fetchRequest = NSFetchRequest(entityName: "WeeklyTask")
+        let fetchRequest = NSFetchRequest(entityName: "RepeatingTask")
         
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: HabiticaClient.TaskSchemaKeys.PRIORITY, ascending: true)]
+        fetchRequest.predicate = NSPredicate(format: "isDaily == %@", NSNumber(bool: self.isDailyView))
         
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.sharedContext, sectionNameKeyPath: nil, cacheName: nil)
         
@@ -83,7 +90,7 @@ class WeeklyTasksController: UITableViewController, NSFetchedResultsControllerDe
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
-        let task = fetchedResultsController.objectAtIndexPath(indexPath) as! WeeklyTask
+        let task = fetchedResultsController.objectAtIndexPath(indexPath) as! RepeatingTask
         let cell = tableView.dequeueReusableCellWithIdentifier("TaskTableCell") as! TaskTableCell
         
         configureCell(cell, withTask: task)
@@ -97,7 +104,7 @@ class WeeklyTasksController: UITableViewController, NSFetchedResultsControllerDe
         {
         case .Delete:
             //here we get the task, then delete it from core data
-            let task = fetchedResultsController.objectAtIndexPath(indexPath) as! WeeklyTask
+            let task = fetchedResultsController.objectAtIndexPath(indexPath) as! RepeatingTask
             sharedContext.deleteObject(task)
             CoreDataStackManager.sharedInstance().saveContext()
         default:
@@ -133,7 +140,7 @@ class WeeklyTasksController: UITableViewController, NSFetchedResultsControllerDe
             tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
         case .Update:
             let cell = tableView.cellForRowAtIndexPath(indexPath!) as! TaskTableCell
-            let task = controller.objectAtIndexPath(indexPath!) as! WeeklyTask
+            let task = controller.objectAtIndexPath(indexPath!) as! RepeatingTask
             configureCell(cell, withTask: task)
         case .Move:
             tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
@@ -148,7 +155,7 @@ class WeeklyTasksController: UITableViewController, NSFetchedResultsControllerDe
     
     //MARK -- Configure Cell
     
-    func configureCell(cell: TaskTableCell, withTask task: WeeklyTask)
+    func configureCell(cell: TaskTableCell, withTask task: RepeatingTask)
     {
         //fill in the components of the task's cell
         if(task.completed)
