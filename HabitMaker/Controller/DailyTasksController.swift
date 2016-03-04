@@ -11,6 +11,14 @@ import UIKit
 
 class DailyTasksController: UITableViewController {
     
+    //MARK -- Outlets
+    @IBOutlet var taskTable: UITableView!
+    
+    //MARK -- Useful Variables
+    
+    
+    //MARK -- Lifecycle
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()

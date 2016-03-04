@@ -9,19 +9,20 @@
 /* Begin PBXBuildFile section */
 		3508C8EF1C75A2D000CA10B3 /* HabiticaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3508C8EE1C75A2D000CA10B3 /* HabiticaClient.swift */; };
 		3545DFD01C6846AD00B92A68 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3545DFCF1C6846AD00B92A68 /* AppDelegate.swift */; };
-		3545DFD21C6846AD00B92A68 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3545DFD11C6846AD00B92A68 /* LoginViewController.swift */; };
 		3545DFD51C6846AD00B92A68 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3545DFD31C6846AD00B92A68 /* Main.storyboard */; };
 		3545DFD71C6846AD00B92A68 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3545DFD61C6846AD00B92A68 /* Images.xcassets */; };
 		3545DFDA1C6846AD00B92A68 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3545DFD81C6846AD00B92A68 /* LaunchScreen.xib */; };
 		3545DFE61C6846AD00B92A68 /* HabitMakerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3545DFE51C6846AD00B92A68 /* HabitMakerTests.swift */; };
-		35B912571C82DAFE004798BC /* RepeatingTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B912561C82DAFE004798BC /* RepeatingTask.swift */; settings = {ASSET_TAGS = (); }; };
-		35C74CD21C75A3CC002EF958 /* HabiticaConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C74CD11C75A3CC002EF958 /* HabiticaConstants.swift */; settings = {ASSET_TAGS = (); }; };
-		35C74CD41C75A3F4002EF958 /* HabiticaConvenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C74CD31C75A3F3002EF958 /* HabiticaConvenience.swift */; settings = {ASSET_TAGS = (); }; };
-		35F480A71C818C2F00825F2D /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 35F480A51C818C2F00825F2D /* Model.xcdatamodeld */; settings = {ASSET_TAGS = (); }; };
-		35F480A91C818CD000825F2D /* CoreDataStackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F480A81C818CD000825F2D /* CoreDataStackManager.swift */; settings = {ASSET_TAGS = (); }; };
-		35F5F9ED1C880B4D001F6B45 /* WeeklyTasksController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F5F9EC1C880B4D001F6B45 /* WeeklyTasksController.swift */; settings = {ASSET_TAGS = (); }; };
-		35F5F9EF1C880B65001F6B45 /* DailyTasksController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F5F9EE1C880B65001F6B45 /* DailyTasksController.swift */; settings = {ASSET_TAGS = (); }; };
-		35F5F9F11C881EDE001F6B45 /* TaskTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F5F9F01C881EDE001F6B45 /* TaskTableCell.swift */; settings = {ASSET_TAGS = (); }; };
+		3579BA911C892EEE00A7F005 /* WeeklyTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3579BA901C892EEE00A7F005 /* WeeklyTask.swift */; };
+		3579BA931C8932A900A7F005 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3579BA921C8932A900A7F005 /* LoginViewController.swift */; };
+		35B912571C82DAFE004798BC /* DailyTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B912561C82DAFE004798BC /* DailyTask.swift */; };
+		35C74CD21C75A3CC002EF958 /* HabiticaConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C74CD11C75A3CC002EF958 /* HabiticaConstants.swift */; };
+		35C74CD41C75A3F4002EF958 /* HabiticaConvenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C74CD31C75A3F3002EF958 /* HabiticaConvenience.swift */; };
+		35F480A71C818C2F00825F2D /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 35F480A51C818C2F00825F2D /* Model.xcdatamodeld */; };
+		35F480A91C818CD000825F2D /* CoreDataStackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F480A81C818CD000825F2D /* CoreDataStackManager.swift */; };
+		35F5F9ED1C880B4D001F6B45 /* WeeklyTasksController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F5F9EC1C880B4D001F6B45 /* WeeklyTasksController.swift */; };
+		35F5F9EF1C880B65001F6B45 /* DailyTasksController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F5F9EE1C880B65001F6B45 /* DailyTasksController.swift */; };
+		35F5F9F11C881EDE001F6B45 /* TaskTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F5F9F01C881EDE001F6B45 /* TaskTableCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,14 +40,15 @@
 		3545DFCA1C6846AD00B92A68 /* HabitMaker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HabitMaker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3545DFCE1C6846AD00B92A68 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3545DFCF1C6846AD00B92A68 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		3545DFD11C6846AD00B92A68 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		3545DFD41C6846AD00B92A68 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3545DFD61C6846AD00B92A68 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		3545DFD91C6846AD00B92A68 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		3545DFDF1C6846AD00B92A68 /* HabitMakerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HabitMakerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3545DFE41C6846AD00B92A68 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3545DFE51C6846AD00B92A68 /* HabitMakerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitMakerTests.swift; sourceTree = "<group>"; };
-		35B912561C82DAFE004798BC /* RepeatingTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RepeatingTask.swift; path = Model/RepeatingTask.swift; sourceTree = "<group>"; };
+		3579BA901C892EEE00A7F005 /* WeeklyTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WeeklyTask.swift; path = Model/WeeklyTask.swift; sourceTree = "<group>"; };
+		3579BA921C8932A900A7F005 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoginViewController.swift; path = Controller/LoginViewController.swift; sourceTree = "<group>"; };
+		35B912561C82DAFE004798BC /* DailyTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DailyTask.swift; path = Model/DailyTask.swift; sourceTree = "<group>"; };
 		35C74CD11C75A3CC002EF958 /* HabiticaConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HabiticaConstants.swift; path = Model/HabiticaConstants.swift; sourceTree = "<group>"; };
 		35C74CD31C75A3F3002EF958 /* HabiticaConvenience.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HabiticaConvenience.swift; path = Model/HabiticaConvenience.swift; sourceTree = "<group>"; };
 		35F480A61C818C2F00825F2D /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
@@ -77,7 +79,8 @@
 		3508C8EB1C75A27A00CA10B3 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				35B912561C82DAFE004798BC /* RepeatingTask.swift */,
+				35B912561C82DAFE004798BC /* DailyTask.swift */,
+				3579BA901C892EEE00A7F005 /* WeeklyTask.swift */,
 				35F480A51C818C2F00825F2D /* Model.xcdatamodeld */,
 				35F480A81C818CD000825F2D /* CoreDataStackManager.swift */,
 				3508C8EE1C75A2D000CA10B3 /* HabiticaClient.swift */,
@@ -147,7 +150,7 @@
 		35C74CD51C76EAE7002EF958 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				3545DFD11C6846AD00B92A68 /* LoginViewController.swift */,
+				3579BA921C8932A900A7F005 /* LoginViewController.swift */,
 				35F5F9EC1C880B4D001F6B45 /* WeeklyTasksController.swift */,
 				35F5F9EE1C880B65001F6B45 /* DailyTasksController.swift */,
 			);
@@ -264,9 +267,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				35B912571C82DAFE004798BC /* RepeatingTask.swift in Sources */,
+				35B912571C82DAFE004798BC /* DailyTask.swift in Sources */,
 				35C74CD21C75A3CC002EF958 /* HabiticaConstants.swift in Sources */,
-				3545DFD21C6846AD00B92A68 /* LoginViewController.swift in Sources */,
 				35C74CD41C75A3F4002EF958 /* HabiticaConvenience.swift in Sources */,
 				35F5F9F11C881EDE001F6B45 /* TaskTableCell.swift in Sources */,
 				35F5F9EF1C880B65001F6B45 /* DailyTasksController.swift in Sources */,
@@ -275,6 +277,8 @@
 				3508C8EF1C75A2D000CA10B3 /* HabiticaClient.swift in Sources */,
 				3545DFD01C6846AD00B92A68 /* AppDelegate.swift in Sources */,
 				35F480A71C818C2F00825F2D /* Model.xcdatamodeld in Sources */,
+				3579BA931C8932A900A7F005 /* LoginViewController.swift in Sources */,
+				3579BA911C892EEE00A7F005 /* WeeklyTask.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

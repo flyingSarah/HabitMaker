@@ -1,25 +1,23 @@
 //
-//  RepeatingTask.swift
+//  WeeklyTask.swift
 //  HabitMaker
 //
-//  Created by Sarah Howe on 2/27/16.
+//  Created by Sarah on 3/3/16.
 //  Copyright © 2016 SarahHowe. All rights reserved.
 //
 
 import Foundation
 import CoreData
 
-class RepeatingTask : NSManagedObject {
+class WeeklyTask : NSManagedObject {
     
     struct Keys
     {
-        static let IS_DAILY = "isDaily"
         static let NUM_REPEATS = "numRepeats"
         static let NUM_FIN_REPEATS = "numFinRepeats"
     }
     
     @NSManaged var id: String?
-    @NSManaged var isDaily: Bool
     @NSManaged var text: String
     @NSManaged var notes: String
     @NSManaged var priority: Double
@@ -34,84 +32,25 @@ class RepeatingTask : NSManagedObject {
         super.init(entity: entity, insertIntoManagedObjectContext: context)
     }
     
-    init(repeatingTask: [String : AnyObject], context: NSManagedObjectContext)
+    init(weeklyTask: [String : AnyObject], context: NSManagedObjectContext)
     {
-        // Get the entity associated with the "Location" type.
-        let entity =  NSEntityDescription.entityForName("RepeatingTask", inManagedObjectContext: context)!
+        // Get the entity associated with the "WeeklyTask" type.
+        let entity =  NSEntityDescription.entityForName("WeeklyTask", inManagedObjectContext: context)!
         
         super.init(entity: entity,insertIntoManagedObjectContext: context)
         
-        id = repeatingTask[HabiticaClient.TaskSchemaKeys.ID] as? String
-        isDaily = repeatingTask[Keys.IS_DAILY] as! Bool
-        text = repeatingTask[HabiticaClient.TaskSchemaKeys.TEXT] as! String
-        notes = repeatingTask[HabiticaClient.TaskSchemaKeys.NOTES] as! String
-        priority = repeatingTask[HabiticaClient.TaskSchemaKeys.PRIORITY] as! Double
-        completed = repeatingTask[HabiticaClient.TaskSchemaKeys.COMPLETED] as! Bool
-        numRepeats = repeatingTask[Keys.NUM_REPEATS] as! NSNumber
-        numFinRepeats = repeatingTask[Keys.NUM_FIN_REPEATS] as! NSNumber
-        streak = repeatingTask[HabiticaClient.TaskSchemaKeys.STREAK] as! NSNumber
+        id = weeklyTask[HabiticaClient.TaskSchemaKeys.ID] as? String
+        text = weeklyTask[HabiticaClient.TaskSchemaKeys.TEXT] as! String
+        notes = weeklyTask[HabiticaClient.TaskSchemaKeys.NOTES] as! String
+        priority = weeklyTask[HabiticaClient.TaskSchemaKeys.PRIORITY] as! Double
+        completed = weeklyTask[HabiticaClient.TaskSchemaKeys.COMPLETED] as! Bool
+        numRepeats = weeklyTask[Keys.NUM_REPEATS] as! NSNumber
+        numFinRepeats = weeklyTask[Keys.NUM_FIN_REPEATS] as! NSNumber
+        streak = weeklyTask[HabiticaClient.TaskSchemaKeys.STREAK] as! NSNumber
     }
     
     
     //MARK -- Helpers - reformat tasks from results to model
-    
-    static func dailyTasksFromResults(tasks: [[String: AnyObject]]) -> NSSet
-    {
-        var dailyTasks = NSSet()
-        
-        for task in tasks
-        {
-            if let habiticaType = task[HabiticaClient.TaskSchemaKeys.TYPE] as? String
-            {
-                if(habiticaType == "daily")
-                {
-                    if let habiticaFreq = task[HabiticaClient.TaskSchemaKeys.FREQUENCY] as? String
-                    {
-                        if(habiticaFreq == "weekly")
-                        {
-                            if let weekRepeatArray = task[HabiticaClient.TaskSchemaKeys.REPEAT] as? [String : Bool]
-                            {
-                                var countDaysToRepeat = 0
-                                for day in weekRepeatArray
-                                {
-                                    if(day.1)
-                                    {
-                                        countDaysToRepeat++
-                                    }
-                                }
-                                
-                                if(countDaysToRepeat == 7)
-                                {
-                                    //create a dictionary that corresponds to the format of the RepeatingTask managed object
-                                    let adjustedTask: [String: AnyObject] = getAdjustedTaskFromResults(task, isDaily: true)
-                                    
-                                    //create the RepeatingTask and add it to an array of daily tasks
-                                    dispatch_async(dispatch_get_main_queue()) {
-                                        
-                                        dailyTasks = dailyTasks.setByAddingObject(RepeatingTask(repeatingTask: adjustedTask, context: CoreDataStackManager.sharedInstance().managedObjectContext))
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                print("from dailyTask results: couldn't find 'repeat' in task")
-                            }
-                        }
-                    }
-                    else
-                    {
-                        print("from dailyTask results: couldn't find 'frequency' in task")
-                    }
-                }
-            }
-            else
-            {
-                print("from dailyTask results: couldn't find 'type' in task")
-            }
-        }
-        
-        return dailyTasks
-    }
     
     static func weeklyTasksFromResults(tasks: [[String: AnyObject]]) -> NSSet
     {
@@ -146,12 +85,12 @@ class RepeatingTask : NSManagedObject {
                                 if(countDaysToRepeat == 1 && sundayRepeat)
                                 {
                                     //create a dictionary that corresponds to the format of the RepeatingTask managed object
-                                    let adjustedTask: [String: AnyObject] = getAdjustedTaskFromResults(task,isDaily: false)
+                                    let adjustedTask: [String: AnyObject] = getAdjustedTaskFromResults(task)
                                     
                                     //create the RepeatingTask and add it to an array of daily tasks
                                     dispatch_async(dispatch_get_main_queue()) {
                                         
-                                        weeklyTasks = weeklyTasks.setByAddingObject(RepeatingTask(repeatingTask: adjustedTask, context: CoreDataStackManager.sharedInstance().managedObjectContext))
+                                        weeklyTasks = weeklyTasks.setByAddingObject(WeeklyTask(weeklyTask: adjustedTask, context: CoreDataStackManager.sharedInstance().managedObjectContext))
                                     }
                                 }
                             }
@@ -176,7 +115,7 @@ class RepeatingTask : NSManagedObject {
         return weeklyTasks
     }
     
-    static func getAdjustedTaskFromResults(taskArray: [String: AnyObject], isDaily: Bool) -> [String: AnyObject]
+    static func getAdjustedTaskFromResults(taskArray: [String: AnyObject]) -> [String: AnyObject]
     {
         //count the number of checklist items and if there are any count how many of them are completed
         var countItemsInChecklist = 0
@@ -197,19 +136,18 @@ class RepeatingTask : NSManagedObject {
                 }
                 else
                 {
-                    print("from dailyTask results: couldn't find 'completed' items in task checklist")
+                    print("getting adjusted weekly task from results: couldn't find 'completed' items in task checklist")
                 }
             }
         }
         else
         {
-            print("from dailyTask results: couldn't find 'checklist' in task - setting numRepeats to 0")
+            print("getting adjusted weekly task from results: couldn't find 'checklist' in task - setting numRepeats to 0")
         }
         
         //create a dictionary that corresponds to the format of the RepeatingTask managed object
         let adjustedTask: [String: AnyObject] = [
             HabiticaClient.TaskSchemaKeys.ID: taskArray[HabiticaClient.TaskSchemaKeys.ID]!,
-            Keys.IS_DAILY: isDaily,
             HabiticaClient.TaskSchemaKeys.TEXT: taskArray[HabiticaClient.TaskSchemaKeys.TEXT]!,
             HabiticaClient.TaskSchemaKeys.NOTES: taskArray[HabiticaClient.TaskSchemaKeys.NOTES]!,
             HabiticaClient.TaskSchemaKeys.PRIORITY: taskArray[HabiticaClient.TaskSchemaKeys.PRIORITY] as! Double,
@@ -223,6 +161,6 @@ class RepeatingTask : NSManagedObject {
     }
     
     //MARK -- Helpers - reformat tasks from model to habitica task schema
-
+    
 }
 

@@ -30,8 +30,8 @@ extension HabiticaClient {
                     {
                         print("Successuflly found \(taskArray.count) total tasks from Habitica")
                         
-                        let dailyTasks = RepeatingTask.dailyTasksFromResults(taskArray)
-                        let weeklyTasks = RepeatingTask.weeklyTasksFromResults(taskArray)
+                        let dailyTasks = DailyTask.dailyTasksFromResults(taskArray)
+                        let weeklyTasks = WeeklyTask.weeklyTasksFromResults(taskArray)
                         
                         //print("\n\ndaily tasks:\n\n\(dailyTasks)\n\n")
                         HabiticaClient.sharedInstance.dailyTasks = dailyTasks
