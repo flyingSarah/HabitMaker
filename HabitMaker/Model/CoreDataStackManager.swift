@@ -14,21 +14,23 @@ private let SQLITE_FILE_NAME = "HabitMaker.sqlite"
 class CoreDataStackManager {
     
     
-    // MARK: - Shared Instance
+    // MARK -- Shared Instance
     
     /**
     *  This class variable provides an easy way to get access
     *  to a shared instance of the CoreDataStackManager class.
     */
-    class func sharedInstance() -> CoreDataStackManager {
-        struct Static {
+    class func sharedInstance() -> CoreDataStackManager
+    {
+        struct Static
+        {
             static let instance = CoreDataStackManager()
         }
         
         return Static.instance
     }
     
-    // MARK: - The Core Data stack. The code has been moved, unaltered, from the AppDelegate.
+    // MARK -- The Core Data stack.
     
     lazy var applicationDocumentsDirectory: NSURL = {
         
@@ -46,18 +48,6 @@ class CoreDataStackManager {
         let modelURL = NSBundle.mainBundle().URLForResource("Model", withExtension: "momd")!
         return NSManagedObjectModel(contentsOfURL: modelURL)!
         }()
-    
-    /**
-    * The Persistent Store Coordinator is an object that the Context uses to interact with the underlying file system. Usually
-    * the persistent store coordinator object uses an SQLite database file to save the managed objects. But it is possible to
-    * configure it to use XML or other formats.
-    *
-    * Typically you will construct your persistent store manager exactly like this. It needs two pieces of information in order
-    * to be set up:
-    *
-    * - The path to the sqlite file that will be used. Usually in the documents directory
-    * - A configured Managed Object Model. See the next property for details.
-    */
     
     lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator? = {
         // The persistent store coordinator for the application. This implementation creates and return a coordinator, having added the store for the application to it. This property is optional since there are legitimate error conditions that could cause the creation of the store to fail.
@@ -99,19 +89,64 @@ class CoreDataStackManager {
         return managedObjectContext
         }()
     
-    // MARK: - Core Data Saving support
+    // MARK -- Core Data Saving support
     
-    func saveContext () {
-        if managedObjectContext.hasChanges {
-            do {
+    func saveContext()
+    {
+        if managedObjectContext.hasChanges
+        {
+            do
+            {
                 try managedObjectContext.save()
-            } catch {
+            }
+            catch let error as NSError
+            {
                 // Replace this implementation with code to handle the error appropriately.
                 // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nserror = error as NSError
-                NSLog("Unresolved error \(nserror), \(nserror.userInfo)")
+                NSLog("Save Context Unresolved Error: \(error), \(error.userInfo)")
                 abort()
             }
         }
+    }
+    
+    //MARK -- Core Data Deleting support
+    
+    //learned how to do this from this stackoverflow thread: http://stackoverflow.com/questions/1077810/delete-reset-all-entries-in-core-data/31961330#31961330
+    func deleteAllItemsInContext()
+    {
+        //fetch all RepeatingTasks
+        let fetchRequest = NSFetchRequest(entityName: "RepeatingTask")
+        
+        if #available(iOS 9.0, *)
+        {
+            print("deleting all in iOS 9.0")
+            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+            
+            //perform the delete
+            do
+            {
+                try persistentStoreCoordinator?.executeRequest(deleteRequest, withContext: managedObjectContext)
+            }
+            catch let error as NSError
+            {
+                NSLog("Delete Items in Context Unresolved Error: \(error), \(error.userInfo)")
+                abort()
+            }
+        }
+        else
+        {
+            print("deleting all in iOS < 9.0")
+            // Fallback on earlier versions
+            let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+            let fetchedObjects = fetchedResultsController.fetchedObjects
+            
+            for object in fetchedObjects!
+            {
+                let task = object as! RepeatingTask
+                managedObjectContext.deleteObject(task)
+            }
+        }
+        
+        saveContext()
     }
 }

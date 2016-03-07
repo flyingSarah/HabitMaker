@@ -13,13 +13,13 @@ extension HabiticaClient {
     
     //MARK -- Task Methods
     
-    func getTasks(uuid: String, apiKey: String, completionHandler: (dailyTasks: NSSet?, weeklyTasks: NSSet?, error: NSError?) -> Void)
+    func getTasks(uuid: String, apiKey: String, completionHandler: (error: NSError?) -> Void)
     {
-        taskForGetMethod(HabiticaClient.Methods.GET_TASKS, uuid: uuid, apiKey: apiKey) { JSONResult , error in
+        taskForGetMethod(HabiticaClient.Constants.TASK_METHODS, uuid: uuid, apiKey: apiKey) { JSONResult, error in
         
             if let error = error
             {
-                completionHandler(dailyTasks: nil, weeklyTasks: nil, error: error)
+                completionHandler(error: error)
             }
             else
             {
@@ -30,20 +30,43 @@ extension HabiticaClient {
                     {
                         print("Successuflly found \(taskArray.count) total tasks from Habitica")
                         
-                        let dailyTasks = RepeatingTask.dailyTasksFromResults(taskArray)
-                        let weeklyTasks = RepeatingTask.weeklyTasksFromResults(taskArray)
+                        RepeatingTask.makeTasksFromResults(taskArray)
                         
-                        //print("\n\ndaily tasks:\n\n\(dailyTasks)\n\n")
-                        HabiticaClient.sharedInstance.dailyTasks = dailyTasks
-                        HabiticaClient.sharedInstance.weeklyTasks = weeklyTasks
-                        completionHandler(dailyTasks: dailyTasks, weeklyTasks: weeklyTasks, error: nil)
+                        completionHandler(error: nil)
                     }
                 }
                 else
                 {
-                    print("task parse error: task results were nil")
+                    print("getTasks parse error: task results were nil")
                 }
             }
         }
+    }
+    
+    func updateExistingTask(uuid: String, apiKey: String, taskID: String, jsonBody: [String: AnyObject], completionHandler: (result: AnyObject?, error: NSError?) -> Void)
+    {
+        taskForPutMethod(HabiticaClient.Constants.TASK_METHODS, uuid: uuid, apiKey: apiKey, idForTaskToUpdate: taskID, jsonBody: jsonBody) { JSONResult, error in
+            
+            if let error = error
+            {
+                completionHandler(result: nil, error: error)
+            }
+            else
+            {
+                if let task = JSONResult as? [String: AnyObject]
+                {
+                    if let reformattedTask = RepeatingTask.returnSingleTaskFromResults(task)
+                    {
+                        completionHandler(result: reformattedTask, error: nil)
+                    }
+                }
+                else
+                {
+                    print("updateExistingTask parse error: task results were nil")
+                }
+            }
+        }
+        
+        //TODO: if we are changing the completed state, I should inc or dec the score on habitica accordingly
     }
 }

@@ -41,6 +41,11 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         let buttons = [refreshButton, addButton]
         
         navigationItem.rightBarButtonItems = buttons
+    }
+    
+    override func viewWillAppear(animated: Bool)
+    {
+        super.viewWillAppear(animated)
         
         //set up tasks
         do
@@ -50,13 +55,59 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         catch{}
         
         fetchedResultsController.delegate = self
-    }
-    
-    override func viewWillAppear(animated: Bool)
-    {
-        super.viewWillAppear(animated)
         
         taskTable.reloadData()
+    }
+    
+    //MARK -- Navigation Bar Actions
+    
+    func logout(sender: AnyObject)
+    {
+        CoreDataStackManager.sharedInstance().deleteAllItemsInContext()
+        
+        NSUserDefaults.standardUserDefaults().setValue("", forKey: HabiticaClient.UserDefaultKeys.UUID)
+        NSUserDefaults.standardUserDefaults().setValue("", forKey: HabiticaClient.UserDefaultKeys.ApiKey)
+        NSUserDefaults.standardUserDefaults().setBool(false, forKey: HabiticaClient.UserDefaultKeys.UserLoginAvailable)
+        
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func refreshButtonClicked(sender: AnyObject)
+    {
+        //delete fetched results
+        let fetchedObjects = fetchedResultsController.fetchedObjects
+        
+        for object in fetchedObjects!
+        {
+            let task = object as! RepeatingTask
+            CoreDataStackManager.sharedInstance().managedObjectContext.deleteObject(task)
+        }
+        
+        CoreDataStackManager.sharedInstance().saveContext()
+        
+        //delete the rest of the items (the ones from the other task list)
+        CoreDataStackManager.sharedInstance().deleteAllItemsInContext()
+        
+        let uuid = NSUserDefaults.standardUserDefaults().valueForKey(HabiticaClient.UserDefaultKeys.UUID) as! String
+        let apiKey = NSUserDefaults.standardUserDefaults().valueForKey(HabiticaClient.UserDefaultKeys.ApiKey) as! String
+        
+        //get all the tasks
+        HabiticaClient.sharedInstance.getTasks(uuid, apiKey: apiKey) { error in
+            
+            if let error = error
+            {
+                //get the description of the specific error that results from the failed request
+                let failureString = error.localizedDescription
+                print("Login Description \(failureString)")
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(), {
+                    
+                    CoreDataStackManager.sharedInstance().saveContext()
+                })
+            }
+        }
     }
     
     //MARK -- Core Data Convenience
@@ -93,7 +144,10 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         let task = fetchedResultsController.objectAtIndexPath(indexPath) as! RepeatingTask
         let cell = tableView.dequeueReusableCellWithIdentifier("TaskTableCell") as! TaskTableCell
         
-        configureCell(cell, withTask: task)
+        dispatch_async(dispatch_get_main_queue()) {
+            
+            self.configureCell(cell, withTask: task)
+        }
         
         return cell
     }
@@ -158,7 +212,9 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
     func configureCell(cell: TaskTableCell, withTask task: RepeatingTask)
     {
         //fill in the components of the task's cell
-        if(task.completed)
+        cell.repeatingTask = task
+        
+        if(task.completed || (task.numRepeats != 0 && task.numRepeats == task.numFinRepeats))
         {
             cell.checkBox.imageView?.image = UIImage(named: "checkedIcon")
         }
@@ -167,7 +223,27 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
             cell.checkBox.imageView?.image = UIImage(named: "uncheckedIcon")
         }
         
+        //weekly tasks need to send a task completed update to habitica if it's sunday and all the repeats items are checked off
+        let today = NSDate()
+        let todaysWeekday = cell.weekdayFromDate(today)
+        
+        if(!task.isDaily && !task.completed && task.numRepeats == task.numFinRepeats && todaysWeekday == HabiticaClient.RepeatWeekdayKeys.SUN)
+        {
+            print("TODO: should send update for weekly task completed parameter. set to true")
+        }
+        
         cell.textField.text = task.text
-        cell.checklistStatusLabel.text = "\(task.numFinRepeats)/\(task.numRepeats)"
+        
+        if(task.numRepeats.integerValue > 1)
+        {
+            cell.checklistStatusLabel.hidden = false
+            cell.checklistStatusLabel.text = "\(task.numFinRepeats)/\(task.numRepeats)"
+        }
+        else
+        {
+            cell.checklistStatusLabel.hidden = true
+        }
     }
+    
+    //MARK -- Helper Functions
 }

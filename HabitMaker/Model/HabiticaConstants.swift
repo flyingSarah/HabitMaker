@@ -15,12 +15,7 @@ extension HabiticaClient {
     {
         //URLs
         static let BASE_URL : String = "https://habitica.com/api/v2/"
-    }
-    
-    //MARK -- Methods
-    struct Methods
-    {
-        static let GET_TASKS : String = "user/tasks/"
+        static let TASK_METHODS : String = "user/tasks/"
     }
     
     //MARK -- Header Argument Keys
@@ -66,5 +61,13 @@ extension HabiticaClient {
         //errors
         static let CODE = "code"
         static let ERROR_MESSAGE = "err"
+    }
+    
+    //MARK -- Keys for User Defaults
+    struct UserDefaultKeys
+    {
+        static let UUID = "uuid"
+        static let ApiKey = "apiKey"
+        static let UserLoginAvailable = "userLoginAvailable"
     }
 }

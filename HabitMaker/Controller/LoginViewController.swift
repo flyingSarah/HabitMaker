@@ -28,15 +28,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     //var tapRecognizer: UITapGestureRecognizer? = nil
     
-    //MARK -- Keys for UserDefaults
-    
-    struct UserDefaultKeys
-    {
-        static let UUID = "uuid"
-        static let ApiKey = "apiKey"
-        static let UserLoginAvailable = "userLoginAvailable"
-    }
-    
     //MARK -- Lifecycle
     
     override func viewDidLoad()
@@ -72,14 +63,14 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         //initialize tap recognizer
         
         //check to see if a login is already stored and if so, go ahead and advance to the next view
-        let userLoginAvailable = NSUserDefaults.standardUserDefaults().boolForKey(UserDefaultKeys.UserLoginAvailable)
+        let userLoginAvailable = NSUserDefaults.standardUserDefaults().boolForKey(HabiticaClient.UserDefaultKeys.UserLoginAvailable)
         
         if(userLoginAvailable)
         {
             print("a user login is available")
-            currentUUID = NSUserDefaults.standardUserDefaults().valueForKey(UserDefaultKeys.UUID) as? String
+            currentUUID = NSUserDefaults.standardUserDefaults().valueForKey(HabiticaClient.UserDefaultKeys.UUID) as? String
             uuidTextField.text = currentUUID!
-            currentApiKey = NSUserDefaults.standardUserDefaults().valueForKey(UserDefaultKeys.ApiKey) as? String
+            currentApiKey = NSUserDefaults.standardUserDefaults().valueForKey(HabiticaClient.UserDefaultKeys.ApiKey) as? String
             apiKeyTextField.text = currentApiKey!
             loginToHabitica()
         }
@@ -115,13 +106,13 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func loginButtonPressed(sender: UIButton)
     {
-        HabiticaClient.sharedInstance.getTasks(uuidTextField.text!, apiKey: apiKeyTextField.text!) { dailyTasks, weeklyTasks, error in
+        HabiticaClient.sharedInstance.getTasks(uuidTextField.text!, apiKey: apiKeyTextField.text!) { error in
             
             if let error = error
             {
                 //get the description of the specific error that results from the failed request
                 let failureString = error.localizedDescription
-                print("Login Description \(failureString)")
+                print("Login Error: \(failureString)")
             }
             else
             {
@@ -131,11 +122,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 })
                 
                 print("Login Complete!")
-                NSUserDefaults.standardUserDefaults().setValue(self.uuidTextField.text, forKey: UserDefaultKeys.UUID)
+                NSUserDefaults.standardUserDefaults().setValue(self.uuidTextField.text, forKey: HabiticaClient.UserDefaultKeys.UUID)
                 self.currentUUID = self.uuidTextField.text
-                NSUserDefaults.standardUserDefaults().setValue(self.apiKeyTextField.text, forKey: UserDefaultKeys.ApiKey)
+                NSUserDefaults.standardUserDefaults().setValue(self.apiKeyTextField.text, forKey: HabiticaClient.UserDefaultKeys.ApiKey)
                 self.currentApiKey = self.apiKeyTextField.text
-                NSUserDefaults.standardUserDefaults().setBool(true, forKey: UserDefaultKeys.UserLoginAvailable)
+                NSUserDefaults.standardUserDefaults().setBool(true, forKey: HabiticaClient.UserDefaultKeys.UserLoginAvailable)
                 
                 self.loginToHabitica()
             }
@@ -144,6 +135,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     func loginToHabitica()
     {
+        //TODO: I should make it so the data syncs every time you log in to prevent sync issues.  so the stuff in login button pressed should happen here too... if a login is available, the data should be cleared first
         print("loading tab bar view...")
         dispatch_async(dispatch_get_main_queue(), {
             

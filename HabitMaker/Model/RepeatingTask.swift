@@ -16,6 +16,7 @@ class RepeatingTask : NSManagedObject {
         static let NUM_REPEATS = "numRepeats"
         static let NUM_FIN_REPEATS = "numFinRepeats"
         static let IS_DAILY = "isDaily"
+        //static let DATE_CHECKLIST_COMPLETED = "dateChecklistCompleted"
     }
     
     @NSManaged var id: String?
@@ -27,7 +28,7 @@ class RepeatingTask : NSManagedObject {
     @NSManaged var numRepeats: NSNumber
     @NSManaged var numFinRepeats: NSNumber
     @NSManaged var streak: NSNumber
-    
+    //@NSManaged var dateChecklistCompleted: NSDate?
     
     override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?)
     {
@@ -50,130 +51,101 @@ class RepeatingTask : NSManagedObject {
         numRepeats = repeatingTask[Keys.NUM_REPEATS] as! NSNumber
         numFinRepeats = repeatingTask[Keys.NUM_FIN_REPEATS] as! NSNumber
         streak = repeatingTask[HabiticaClient.TaskSchemaKeys.STREAK] as! NSNumber
+        //dateChecklistCompleted = repeatingTask[Keys.DATE_CHECKLIST_COMPLETED] as? NSDate
     }
     
     
-    //MARK -- Helpers - reformat tasks from results to model
+    //MARK -- Helpers - reformat tasks from results to the RepeatingTask model
     
-    static func dailyTasksFromResults(tasks: [[String: AnyObject]]) -> NSSet
+    static func makeTasksFromResults(tasks: [[String: AnyObject]])
     {
-        var dailyTasks = NSSet()
-        
         for task in tasks
         {
-            if let habiticaType = task[HabiticaClient.TaskSchemaKeys.TYPE] as? String
+            if let useableTask = returnSingleTaskFromResults(task)
             {
-                if(habiticaType == "daily")
-                {
-                    if let habiticaFreq = task[HabiticaClient.TaskSchemaKeys.FREQUENCY] as? String
-                    {
-                        if(habiticaFreq == "weekly")
-                        {
-                            if let weekRepeatArray = task[HabiticaClient.TaskSchemaKeys.REPEAT] as? [String : Bool]
-                            {
-                                var countDaysToRepeat = 0
-                                for day in weekRepeatArray
-                                {
-                                    if(day.1)
-                                    {
-                                        countDaysToRepeat++
-                                    }
-                                }
-                                
-                                if(countDaysToRepeat == 7)
-                                {
-                                    //create a dictionary that corresponds to the format of the RepeatingTask managed object
-                                    let adjustedTask: [String: AnyObject] = getAdjustedTaskFromResults(task, isDaily: true)
-                                    
-                                    //create the RepeatingTask and add it to an array of daily tasks
-                                    dispatch_async(dispatch_get_main_queue()) {
-                                        
-                                        dailyTasks = dailyTasks.setByAddingObject(RepeatingTask(repeatingTask: adjustedTask, context: CoreDataStackManager.sharedInstance().managedObjectContext))
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                print("from dailyTask results: couldn't find 'repeat' in task")
-                            }
-                        }
-                    }
-                    else
-                    {
-                        print("from dailyTask results: couldn't find 'frequency' in task")
-                    }
+                dispatch_async(dispatch_get_main_queue()) {
+                    
+                    //create the repeating task for each of the chosen tasks
+                    let _ = RepeatingTask(repeatingTask: useableTask, context: CoreDataStackManager.sharedInstance().managedObjectContext)
                 }
             }
-            else
-            {
-                print("from dailyTask results: couldn't find 'type' in task")
-            }
         }
-        
-        return dailyTasks
     }
     
-    static func weeklyTasksFromResults(tasks: [[String: AnyObject]]) -> NSSet
+    static func returnSingleTaskFromResults(task: [String: AnyObject]) -> [String: AnyObject]?
     {
-        var weeklyTasks = NSSet()
-        
-        for task in tasks
+        if let habiticaType = task[HabiticaClient.TaskSchemaKeys.TYPE] as? String
         {
-            if let habiticaType = task[HabiticaClient.TaskSchemaKeys.TYPE] as? String
+            if(habiticaType == "daily")
             {
-                if(habiticaType == "daily")
+                if let habiticaFreq = task[HabiticaClient.TaskSchemaKeys.FREQUENCY] as? String
                 {
-                    if let habiticaFreq = task[HabiticaClient.TaskSchemaKeys.FREQUENCY] as? String
+                    if(habiticaFreq == "weekly")
                     {
-                        if(habiticaFreq == "weekly")
+                        if let weekRepeatArray = task[HabiticaClient.TaskSchemaKeys.REPEAT] as? [String : Bool]
                         {
-                            if let weekRepeatArray = task[HabiticaClient.TaskSchemaKeys.REPEAT] as? [String : Bool]
+                            var countDaysToRepeat = 0
+                            var sundayRepeat = false
+                            for day in weekRepeatArray
                             {
-                                var countDaysToRepeat = 0
-                                var sundayRepeat = false
-                                for day in weekRepeatArray
+                                if(day.1)
                                 {
-                                    if(day.1)
+                                    countDaysToRepeat++
+                                    if(day.0 == HabiticaClient.RepeatWeekdayKeys.SUN)
                                     {
-                                        countDaysToRepeat++
-                                        if(day.0 == HabiticaClient.RepeatWeekdayKeys.SUN)
-                                        {
-                                            sundayRepeat = true
-                                        }
+                                        sundayRepeat = true
                                     }
                                 }
+                            }
+                            
+                            if let habiticaChecklist = task[HabiticaClient.TaskSchemaKeys.CHECKLIST] as? [[String : AnyObject]]
+                            {
+                                var countChecklistItems = 0
                                 
-                                if(countDaysToRepeat == 1 && sundayRepeat)
+                                for _ in habiticaChecklist
+                                {
+                                    countChecklistItems++
+                                }
+                                
+                                //to be considered a weekly task, the task must meet these requirements:
+                                if(countDaysToRepeat == 1 && sundayRepeat && countChecklistItems > 0)
                                 {
                                     //create a dictionary that corresponds to the format of the RepeatingTask managed object
                                     let adjustedTask: [String: AnyObject] = getAdjustedTaskFromResults(task, isDaily: false)
                                     
-                                    //create the RepeatingTask and add it to an array of daily tasks
-                                    dispatch_async(dispatch_get_main_queue()) {
-                                        
-                                        weeklyTasks = weeklyTasks.setByAddingObject(RepeatingTask(repeatingTask: adjustedTask, context: CoreDataStackManager.sharedInstance().managedObjectContext))
-                                    }
+                                    return adjustedTask
+                                    
+                                }
+                                else if(countDaysToRepeat == 7)  //to be considered a daily task, the task must meet these requirements
+                                {
+                                    let adjustedTask: [String: AnyObject] = getAdjustedTaskFromResults(task, isDaily: true)
+                                    
+                                    return adjustedTask
                                 }
                             }
                             else
                             {
-                                print("from weeklyTask results: couldn't find 'repeat' in task")
+                                print("from task results: couldn't find 'checklist' in task")
                             }
                         }
-                    }
-                    else
-                    {
-                        print("from weeklyTask results: couldn't find 'frequency' in task")
+                        else
+                        {
+                            print("from task results: couldn't find 'repeat' in task")
+                        }
                     }
                 }
-            }
-            else
-            {
-                print("from weeklyTask results: couldn't find 'type' in task")
+                else
+                {
+                    print("from task results: couldn't find 'frequency' in task")
+                }
             }
         }
+        else
+        {
+            print("from task results: couldn't find 'type' in task")
+        }
         
-        return weeklyTasks
+        return nil
     }
     
     static func getAdjustedTaskFromResults(taskArray: [String: AnyObject], isDaily: Bool) -> [String: AnyObject]
@@ -181,6 +153,7 @@ class RepeatingTask : NSManagedObject {
         //count the number of checklist items and if there are any count how many of them are completed
         var countItemsInChecklist = 0
         var countItemsCompletedInChecklist = 0
+        //var dateChecklistCompleted: NSDate? = nil
         
         if let habiticaChecklist = taskArray[HabiticaClient.TaskSchemaKeys.CHECKLIST] as? [[String: AnyObject]]
         {
@@ -206,17 +179,23 @@ class RepeatingTask : NSManagedObject {
             print("getting adjusted results: couldn't find 'checklist' in task - setting numRepeats to 0")
         }
         
+        /*if(taskArray[HabiticaClient.TaskSchemaKeys.COMPLETED] as! Bool)
+        {
+            dateChecklistCompleted = NSDate()
+        }*/
+        
         //create a dictionary that corresponds to the format of the RepeatingTask managed object
         let adjustedTask: [String: AnyObject] = [
-            HabiticaClient.TaskSchemaKeys.ID: taskArray[HabiticaClient.TaskSchemaKeys.ID]!,
-            HabiticaClient.TaskSchemaKeys.TEXT: taskArray[HabiticaClient.TaskSchemaKeys.TEXT]!,
+            HabiticaClient.TaskSchemaKeys.ID: taskArray[HabiticaClient.TaskSchemaKeys.ID] as! String,
+            HabiticaClient.TaskSchemaKeys.TEXT: taskArray[HabiticaClient.TaskSchemaKeys.TEXT] as! String,
             Keys.IS_DAILY: isDaily,
             HabiticaClient.TaskSchemaKeys.NOTES: taskArray[HabiticaClient.TaskSchemaKeys.NOTES]!,
             HabiticaClient.TaskSchemaKeys.PRIORITY: taskArray[HabiticaClient.TaskSchemaKeys.PRIORITY] as! Double,
             HabiticaClient.TaskSchemaKeys.COMPLETED: taskArray[HabiticaClient.TaskSchemaKeys.COMPLETED] as! Bool,
             Keys.NUM_REPEATS: countItemsInChecklist,
             Keys.NUM_FIN_REPEATS: countItemsCompletedInChecklist,
-            HabiticaClient.TaskSchemaKeys.STREAK: taskArray[HabiticaClient.TaskSchemaKeys.STREAK]!
+            HabiticaClient.TaskSchemaKeys.STREAK: taskArray[HabiticaClient.TaskSchemaKeys.STREAK] as! Int
+            //Keys.DATE_CHECKLIST_COMPLETED: dateChecklistCompleted
         ]
         //print(adjustedTask)
         return adjustedTask
