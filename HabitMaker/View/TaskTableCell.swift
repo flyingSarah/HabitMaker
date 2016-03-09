@@ -13,7 +13,7 @@ class TaskTableCell: UITableViewCell {
     //MARK -- Outlets
     
     @IBOutlet weak var checkBox: UIButton!
-    @IBOutlet weak var textField: UITextField!
+    @IBOutlet weak var textField: UILabel!
     @IBOutlet weak var checklistStatusLabel: UILabel!
     @IBOutlet weak var dragButton: UIButton!
     @IBOutlet weak var editButton: UIButton!

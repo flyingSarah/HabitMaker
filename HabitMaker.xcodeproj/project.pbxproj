@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		350448FF1C9010EC0036FD8E /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350448FE1C9010EC0036FD8E /* EditViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		3508C8EF1C75A2D000CA10B3 /* HabiticaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3508C8EE1C75A2D000CA10B3 /* HabiticaClient.swift */; };
 		3545DFD01C6846AD00B92A68 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3545DFCF1C6846AD00B92A68 /* AppDelegate.swift */; };
 		3545DFD51C6846AD00B92A68 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3545DFD31C6846AD00B92A68 /* Main.storyboard */; };
@@ -34,6 +35,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		350448FE1C9010EC0036FD8E /* EditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EditViewController.swift; path = Controller/EditViewController.swift; sourceTree = "<group>"; };
 		3508C8EE1C75A2D000CA10B3 /* HabiticaClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HabiticaClient.swift; path = Model/HabiticaClient.swift; sourceTree = "<group>"; };
 		3545DFCA1C6846AD00B92A68 /* HabitMaker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HabitMaker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3545DFCE1C6846AD00B92A68 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -147,6 +149,7 @@
 			children = (
 				3579BA921C8932A900A7F005 /* LoginViewController.swift */,
 				35F5F9EC1C880B4D001F6B45 /* RepeatingTaskController.swift */,
+				350448FE1C9010EC0036FD8E /* EditViewController.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -270,6 +273,7 @@
 				3508C8EF1C75A2D000CA10B3 /* HabiticaClient.swift in Sources */,
 				3545DFD01C6846AD00B92A68 /* AppDelegate.swift in Sources */,
 				35F480A71C818C2F00825F2D /* Model.xcdatamodeld in Sources */,
+				350448FF1C9010EC0036FD8E /* EditViewController.swift in Sources */,
 				3579BA931C8932A900A7F005 /* LoginViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

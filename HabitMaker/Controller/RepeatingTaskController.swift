@@ -18,6 +18,9 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
     //MARK -- Useful Variables
     var isDailyView = false
     
+    let uuid = NSUserDefaults.standardUserDefaults().valueForKey(HabiticaClient.UserDefaultKeys.UUID) as! String
+    let apiKey = NSUserDefaults.standardUserDefaults().valueForKey(HabiticaClient.UserDefaultKeys.ApiKey) as! String
+    
     //MARK -- Lifecycle
     
     override func viewDidLoad()
@@ -88,9 +91,6 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         //delete the rest of the items (the ones from the other task list)
         CoreDataStackManager.sharedInstance().deleteAllItemsInContext()
         
-        let uuid = NSUserDefaults.standardUserDefaults().valueForKey(HabiticaClient.UserDefaultKeys.UUID) as! String
-        let apiKey = NSUserDefaults.standardUserDefaults().valueForKey(HabiticaClient.UserDefaultKeys.ApiKey) as! String
-        
         //get all the tasks
         HabiticaClient.sharedInstance.getTasks(uuid, apiKey: apiKey) { error in
             
@@ -150,6 +150,13 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         }
         
         return cell
+    }
+    
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+    {
+        let task = fetchedResultsController.objectAtIndexPath(indexPath) as! RepeatingTask
+        
+        showAlertController(task.text, message: task.notes)
     }
     
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath)
@@ -229,7 +236,34 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         
         if(!task.isDaily && !task.completed && task.numRepeats == task.numFinRepeats && todaysWeekday == HabiticaClient.RepeatWeekdayKeys.SUN)
         {
-            print("TODO: should send update for weekly task completed parameter. set to true")
+            //print("should send update for weekly task completed parameter. set to true")
+            
+            HabiticaClient.sharedInstance.updateExistingTask(uuid, apiKey: apiKey, taskID: task.id!, jsonBody: [HabiticaClient.TaskSchemaKeys.COMPLETED: true]) { result, error in
+                
+                if let error = error
+                {
+                    let failureString = error.localizedDescription
+                    print("Configure Cell Error: \(failureString)")
+                }
+                else
+                {
+                    if let newTaskData = result as? [String: AnyObject]
+                    {
+                        task.completed = newTaskData[HabiticaClient.TaskSchemaKeys.COMPLETED] as! Bool
+                        
+                        //save the context after the response from habitica is successful
+                        dispatch_async(dispatch_get_main_queue()) {
+                            
+                            CoreDataStackManager.sharedInstance().saveContext()
+                        }
+                    }
+                    else
+                    {
+                        print("Configure Cell Error: couldn't convert result to dictionary")
+                    }
+                    
+                }
+            }
         }
         
         cell.textField.text = task.text
@@ -246,4 +280,16 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
     }
     
     //MARK -- Helper Functions
+    
+    func showAlertController(title: String, message: String)
+    {
+        dispatch_async(dispatch_get_main_queue()) {
+            
+            let alert: UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+            let okAction: UIAlertAction = UIAlertAction(title: "OK", style: .Cancel, handler: nil)
+            alert.addAction(okAction)
+            
+            self.presentViewController(alert, animated: true, completion: nil)
+        }
+    }
 }

@@ -68,11 +68,22 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         if(userLoginAvailable)
         {
             print("a user login is available")
+            
+            //data should sync every time you log in
+            
+            CoreDataStackManager.sharedInstance().deleteAllItemsInContext()
+            
             currentUUID = NSUserDefaults.standardUserDefaults().valueForKey(HabiticaClient.UserDefaultKeys.UUID) as? String
             uuidTextField.text = currentUUID!
             currentApiKey = NSUserDefaults.standardUserDefaults().valueForKey(HabiticaClient.UserDefaultKeys.ApiKey) as? String
             apiKeyTextField.text = currentApiKey!
-            loginToHabitica()
+            
+            loginToHabitica(currentUUID!, apiKey: currentApiKey!)
+        }
+        else
+        {
+            uuidTextField.text = ""
+            apiKeyTextField.text = ""
         }
         
     }
@@ -85,10 +96,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     override func viewWillDisappear(animated: Bool)
     {
         super.viewWillDisappear(animated)
-        
-        uuidTextField.text = ""
-        apiKeyTextField.text = ""
-        //loginButton.enabled = false
     }
 
     /*override func didReceiveMemoryWarning()
@@ -106,36 +113,40 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func loginButtonPressed(sender: UIButton)
     {
+        currentUUID = uuidTextField.text
+        currentApiKey = apiKeyTextField.text
+        
+        loginToHabitica(currentUUID!, apiKey: currentApiKey!)
+    }
+    
+    func loginToHabitica(uuid: String, apiKey: String)
+    {
         HabiticaClient.sharedInstance.getTasks(uuidTextField.text!, apiKey: apiKeyTextField.text!) { error in
             
             if let error = error
             {
+                NSUserDefaults.standardUserDefaults().setBool(false, forKey: HabiticaClient.UserDefaultKeys.UserLoginAvailable)
+                
                 //get the description of the specific error that results from the failed request
                 let failureString = error.localizedDescription
                 print("Login Error: \(failureString)")
             }
             else
             {
+                NSUserDefaults.standardUserDefaults().setValue(self.uuidTextField.text, forKey: HabiticaClient.UserDefaultKeys.UUID)
+                NSUserDefaults.standardUserDefaults().setValue(self.apiKeyTextField.text, forKey: HabiticaClient.UserDefaultKeys.ApiKey)
+                NSUserDefaults.standardUserDefaults().setBool(true, forKey: HabiticaClient.UserDefaultKeys.UserLoginAvailable)
+                
                 dispatch_async(dispatch_get_main_queue(), {
                     
                     CoreDataStackManager.sharedInstance().saveContext()
                 })
                 
                 print("Login Complete!")
-                NSUserDefaults.standardUserDefaults().setValue(self.uuidTextField.text, forKey: HabiticaClient.UserDefaultKeys.UUID)
-                self.currentUUID = self.uuidTextField.text
-                NSUserDefaults.standardUserDefaults().setValue(self.apiKeyTextField.text, forKey: HabiticaClient.UserDefaultKeys.ApiKey)
-                self.currentApiKey = self.apiKeyTextField.text
-                NSUserDefaults.standardUserDefaults().setBool(true, forKey: HabiticaClient.UserDefaultKeys.UserLoginAvailable)
-                
-                self.loginToHabitica()
             }
         }
-    }
-    
-    func loginToHabitica()
-    {
-        //TODO: I should make it so the data syncs every time you log in to prevent sync issues.  so the stuff in login button pressed should happen here too... if a login is available, the data should be cleared first
+        
+        
         print("loading tab bar view...")
         dispatch_async(dispatch_get_main_queue(), {
             
