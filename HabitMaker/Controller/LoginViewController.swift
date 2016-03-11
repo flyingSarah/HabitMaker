@@ -20,8 +20,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     //MARK -- Variables
     
-    var appDelegate: AppDelegate!
-    var session: NSURLSession!
+    //var appDelegate: AppDelegate!
+    //var session: NSURLSession!
     
     var currentUUID: String? = nil
     var currentApiKey: String? = nil
@@ -35,18 +35,18 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         
         //get the app delegate
-        appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        //appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
         //get the shared url session
-        session = NSURLSession.sharedSession()
+        //session = NSURLSession.sharedSession()
         
         uuidTextField.delegate = self
         apiKeyTextField.delegate = self
         
         //set placeholder text color
         //Found out how to do this from this stackoverflow topic: http://stackoverflow.com/questions/26076054/changing-placeholder-text-color-with-swift
-        uuidTextField.attributedPlaceholder = NSAttributedString(string: "UUID", attributes: [NSForegroundColorAttributeName : UIColor.whiteColor()])
-        apiKeyTextField.attributedPlaceholder = NSAttributedString(string: "API Key", attributes: [NSForegroundColorAttributeName : UIColor.whiteColor()])
+        //uuidTextField.attributedPlaceholder = NSAttributedString(string: "UUID", attributes: [NSForegroundColorAttributeName : UIColor.whiteColor()])
+        //apiKeyTextField.attributedPlaceholder = NSAttributedString(string: "API Key", attributes: [NSForegroundColorAttributeName : UIColor.whiteColor()])
         
         //add a little left indent/padding on the text fields
         //Found how to do this from this stackoverflow topic: http://stackoverflow.com/questions/7565645/indent-the-text-in-a-uitextfield
@@ -69,7 +69,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         {
             print("a user login is available")
             
-            //data should sync every time you log in
+            //sync data every time you log in by deleting the objects and then re-downloading them
             
             CoreDataStackManager.sharedInstance().deleteAllItemsInContext()
             

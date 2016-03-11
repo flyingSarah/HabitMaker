@@ -23,6 +23,8 @@ class TaskTableCell: UITableViewCell {
     
     var repeatingTask: RepeatingTask? = nil
     
+    var presentEditViewHandler: ((task: RepeatingTask) -> Void)?
+    
     //MARK -- Actions
 
     @IBAction func checkBoxButtonPressed(sender: UIButton)
@@ -118,6 +120,12 @@ class TaskTableCell: UITableViewCell {
         {
             print("clicked checkbox for item with no assigned task -- shouldn't really be possible")
         }
+    }
+    
+    
+    @IBAction func editButtonClicked(sender: UIButton)
+    {
+        presentEditViewHandler?(task: repeatingTask!)
     }
     
     //MARK -- Helper Functions

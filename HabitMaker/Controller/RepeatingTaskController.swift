@@ -110,6 +110,16 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         }
     }
     
+    func addTaskButtonClicked(sender: AnyObject)
+    {
+        dispatch_async(dispatch_get_main_queue(), {
+            
+            let controller = self.storyboard!.instantiateViewControllerWithIdentifier("EditViewController") as! EditViewController
+            
+            self.presentViewController(controller, animated: true, completion: nil)
+        })
+    }
+    
     //MARK -- Core Data Convenience
     
     var sharedContext: NSManagedObjectContext {
@@ -276,6 +286,19 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         else
         {
             cell.checklistStatusLabel.hidden = true
+        }
+        
+        //set the completion handler for the task so clicking on the edit button will take you to the edit view
+        cell.presentEditViewHandler = { [unowned self] (task: RepeatingTask) -> Void in
+            
+            dispatch_async(dispatch_get_main_queue()) {
+                
+                let controller = self.storyboard!.instantiateViewControllerWithIdentifier("EditViewController") as! EditViewController
+                controller.task = task
+                controller.isDaily = task.isDaily
+                
+                self.presentViewController(controller, animated: true, completion: nil)
+            }
         }
     }
     
