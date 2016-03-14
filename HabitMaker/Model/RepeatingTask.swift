@@ -16,7 +16,6 @@ class RepeatingTask : NSManagedObject {
         static let NUM_REPEATS = "numRepeats"
         static let NUM_FIN_REPEATS = "numFinRepeats"
         static let IS_DAILY = "isDaily"
-        //static let DATE_CHECKLIST_COMPLETED = "dateChecklistCompleted"
     }
     
     @NSManaged var id: String?
@@ -28,7 +27,6 @@ class RepeatingTask : NSManagedObject {
     @NSManaged var numRepeats: NSNumber
     @NSManaged var numFinRepeats: NSNumber
     @NSManaged var streak: NSNumber
-    //@NSManaged var dateChecklistCompleted: NSDate?
     
     static var stopActivityIndicator: (() -> Void)?
     
@@ -53,7 +51,6 @@ class RepeatingTask : NSManagedObject {
         numRepeats = repeatingTask[Keys.NUM_REPEATS] as! NSNumber
         numFinRepeats = repeatingTask[Keys.NUM_FIN_REPEATS] as! NSNumber
         streak = repeatingTask[HabiticaClient.TaskSchemaKeys.STREAK] as! NSNumber
-        //dateChecklistCompleted = repeatingTask[Keys.DATE_CHECKLIST_COMPLETED] as? NSDate
     }
     
     
@@ -157,7 +154,6 @@ class RepeatingTask : NSManagedObject {
         //count the number of checklist items and if there are any count how many of them are completed
         var countItemsInChecklist = 0
         var countItemsCompletedInChecklist = 0
-        //var dateChecklistCompleted: NSDate? = nil
         
         if let habiticaChecklist = taskArray[HabiticaClient.TaskSchemaKeys.CHECKLIST] as? [[String: AnyObject]]
         {
@@ -183,11 +179,6 @@ class RepeatingTask : NSManagedObject {
             print("getting adjusted results: couldn't find 'checklist' in task - setting numRepeats to 0")
         }
         
-        /*if(taskArray[HabiticaClient.TaskSchemaKeys.COMPLETED] as! Bool)
-        {
-            dateChecklistCompleted = NSDate()
-        }*/
-        
         //create a dictionary that corresponds to the format of the RepeatingTask managed object
         let adjustedTask: [String: AnyObject] = [
             HabiticaClient.TaskSchemaKeys.ID: taskArray[HabiticaClient.TaskSchemaKeys.ID] as! String,
@@ -201,11 +192,39 @@ class RepeatingTask : NSManagedObject {
             HabiticaClient.TaskSchemaKeys.STREAK: taskArray[HabiticaClient.TaskSchemaKeys.STREAK] as! Int
             //Keys.DATE_CHECKLIST_COMPLETED: dateChecklistCompleted
         ]
-        //print(adjustedTask)
+
         return adjustedTask
     }
     
     //MARK -- Helpers - reformat tasks from model to habitica task schema
 
+    static func makeChecklistArray(numRepeats: Int, numFinRepeats: Int) -> [[String: AnyObject]]
+    {
+        var checklistArray = [[String: AnyObject]]()
+        
+        var itr = 0
+        
+        while(numRepeats > itr)
+        {
+            var itemDict = [String: AnyObject]()
+            
+            if(numFinRepeats > itr)
+            {
+                itemDict[HabiticaClient.ChecklistBodyKeys.COMPLETED] = true
+            }
+            else
+            {
+                itemDict[HabiticaClient.ChecklistBodyKeys.COMPLETED] = false
+            }
+            
+            itr++
+            
+            itemDict[HabiticaClient.ChecklistBodyKeys.TEXT] = "\(itr)"
+            
+            checklistArray.append(itemDict)
+        }
+        
+        return checklistArray
+    }
 }
 

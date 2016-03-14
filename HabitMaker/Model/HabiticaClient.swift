@@ -25,7 +25,7 @@ class HabiticaClient : NSObject {
         super.init()
     }
     
-    //MARK -- Get Tasks
+    //MARK -- Get Task
     
     func taskForGetMethod(method: String, uuid: String, apiKey: String, completionHandler: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask
     {
@@ -34,8 +34,6 @@ class HabiticaClient : NSObject {
         //print("attempting to request the following url: \(urlString)")
         let url = NSURL(string: urlString)!
         let request = NSMutableURLRequest(URL: url)
-        
-        //var jsonifyError: NSError? = nil
         
         request.HTTPMethod = "GET"
         request.addValue(uuid, forHTTPHeaderField: HabiticaClient.HeaderArgumentKeys.API_USER)
@@ -60,12 +58,10 @@ class HabiticaClient : NSObject {
         return task
     }
     
-    //MARK -- Put Tasks
+    //MARK -- Put Task
     
     func taskForPutMethod(method: String, uuid: String, apiKey: String, idForTaskToUpdate: String, jsonBody: [String: AnyObject], completionHandler: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask
     {
-        //print("PUT method called with jsonBody: \(jsonBody)")
-        
         //build the URL and configure the request
         let urlString = HabiticaClient.Constants.BASE_URL + method + idForTaskToUpdate
         print("attempting to request the following url: \(urlString)")
@@ -85,6 +81,51 @@ class HabiticaClient : NSObject {
         catch let error as NSError
         {
             print("Habitica Client Put Method HTTP Body error: \(error.description)")
+            request.HTTPBody = nil
+        }
+        
+        //make the request
+        let task = session.dataTaskWithRequest(request) {data, response, downloadError in
+            
+            //parse and use the data
+            if let error = downloadError
+            {
+                let newError = HabiticaClient.errorForData(data, response: response, error: error)
+                completionHandler(result: nil, error: newError)
+            }
+            else
+            {
+                HabiticaClient.parseJSONWithCompletionHandler(data!, completionHandler: completionHandler)
+            }
+        }
+        
+        task.resume()
+        return task
+    }
+    
+    //MARK -- Post Task
+    
+    func taskForPostMethod(method: String, uuid: String, apiKey: String, jsonBody: [String: AnyObject], completionHandler: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask
+    {
+        //build the URL and configure the request
+        let urlString = HabiticaClient.Constants.BASE_URL + method
+        print("attempting to request the following url: \(urlString)")
+        let url = NSURL(string: urlString)!
+        let request = NSMutableURLRequest(URL: url)
+        
+        request.HTTPMethod = "POST"
+        request.addValue(uuid, forHTTPHeaderField: HabiticaClient.HeaderArgumentKeys.API_USER)
+        request.addValue(apiKey, forHTTPHeaderField: HabiticaClient.HeaderArgumentKeys.API_KEY)
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        do
+        {
+            request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(jsonBody, options: [])
+        }
+        catch let error as NSError
+        {
+            print("Habitica Client Post Method HTTP Body error: \(error.description)")
             request.HTTPBody = nil
         }
         

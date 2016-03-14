@@ -116,7 +116,7 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
             {
                 //get the description of the specific error that results from the failed request
                 let failureString = error.localizedDescription
-                print("Login Description \(failureString)")
+                self.showAlertController("Error Refreshing Tasks", message: failureString)
             }
             else
             {
@@ -136,7 +136,11 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
             
             controller.isDaily = self.isDailyView
             
-            self.presentViewController(controller, animated: true, completion: nil)
+            
+            self.navigationController?.pushViewController(controller, animated: true)
+            //self.showViewController(controller, sender: self)
+            
+            //self.presentViewController(controller, animated: true, completion: nil)
         })
     }
     
@@ -166,17 +170,7 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
     {
         let sectionInfo = fetchedResultsController.sections![section]
         
-        let numberOfObjects = sectionInfo.numberOfObjects
-        
-        /*print("number of rows in section \(numberOfObjects) \(HabiticaClient.sharedInstance.isDownloading) \(activityIndicator.isAnimating())")
-        
-        if(numberOfObjects == 0 && !HabiticaClient.sharedInstance.isDownloading && activityIndicator.isAnimating())
-        {
-            print("stop animating when numObjects is 0")
-            activityIndicator.stopAnimating()
-        }*/
-        
-        return numberOfObjects
+        return sectionInfo.numberOfObjects
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
@@ -228,14 +222,6 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
     func controllerWillChangeContent(controller: NSFetchedResultsController)
     {
         tableView.beginUpdates()
-        
-        /*print("fetch will change content")
-        
-        if(!activityIndicator.isAnimating())
-        {
-            print("start animating with fetch will change content")
-            activityIndicator.startAnimating()
-        }*/
     }
     
     func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType)
@@ -301,7 +287,7 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
                 if let error = error
                 {
                     let failureString = error.localizedDescription
-                    print("Configure Cell Error: \(failureString)")
+                    self.showAlertController("Configure Cell Error", message: failureString)
                 }
                 else
                 {
@@ -345,7 +331,7 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
                 controller.task = task
                 controller.isDaily = task.isDaily
                 
-                self.presentViewController(controller, animated: true, completion: nil)
+                self.navigationController?.pushViewController(controller, animated: true)
             }
         }
     }
@@ -354,20 +340,10 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
     
     func stopActivityIndicator()
     {
-        print("stopActivityIndicator called")
-        
         dispatch_async(dispatch_get_main_queue()) {
             
             print("stop animating with repeat task stop func")
             self.activityIndicator.stopAnimating()
-            /*if(self.activityIndicator.isAnimating())
-            {
-                //TODO: figure out why this doesn't actually stop the indicator
-            }
-            else
-            {
-                print("activity indicator animating: \(self.activityIndicator.isAnimating())")
-            }*/
         }
     }
     

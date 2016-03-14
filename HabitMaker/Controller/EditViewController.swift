@@ -8,7 +8,7 @@
 
 import UIKit
 
-class EditViewController: UIViewController, UITextFieldDelegate {
+class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     
     //MARK -- Outlets
     
@@ -18,6 +18,7 @@ class EditViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var prioritySelector: UISegmentedControl!
     @IBOutlet weak var notesTextField: UITextView!
     @IBOutlet weak var repetitionsLabel: UILabel!
+    @IBOutlet weak var saveButton: UIButton!
     
     //MARK -- Useful Variables
     
@@ -38,6 +39,7 @@ class EditViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         
         taskTitleField.delegate = self
+        notesTextField.delegate = self
         
         //add a little left indent/padding on the text field
         //Found how to do this from this stackoverflow topic: http://stackoverflow.com/questions/7565645/indent-the-text-in-a-uitextfield
@@ -63,13 +65,18 @@ class EditViewController: UIViewController, UITextFieldDelegate {
         {
             makeNewTask = true
             
+            saveButton.enabled = false
+            
             if(isDaily)
             {
                 repetitionsLabel.text = "Number of Repetitions per Day:"
+                repeatStepper.minimumValue = 0
             }
             else
             {
                 repetitionsLabel.text = "Number of Repetitions per Week:"
+                repeatStepper.minimumValue = 1
+                repeatNumberBox.text = "\(Int(repeatStepper.value))"
             }
         }
         else
@@ -97,27 +104,116 @@ class EditViewController: UIViewController, UITextFieldDelegate {
     
     //MARK -- Actions
     
+    @IBAction func titleFieldChanged(sender: UITextField)
+    {
+        if(sender.text!.isEmpty)
+        {
+            saveButton.enabled = false
+        }
+        else
+        {
+            saveButton.enabled = true
+        }
+        
+        updatesToSend[HabiticaClient.TaskSchemaKeys.TEXT] = sender.text!
+    }
+    
     @IBAction func repeatStepperValueChanged(sender: UIStepper)
     {
-        repeatNumberBox.text = "\(Int(sender.value))"
+        let repeatValue = Int(sender.value)
+        
+        repeatNumberBox.text = "\(repeatValue)"
+        
+        var numFinRepeats = 0
+        
+        if let task = task
+        {
+            if(task.numFinRepeats.integerValue > task.numRepeats.integerValue)
+            {
+                numFinRepeats = task.numRepeats.integerValue
+            }
+        }
+        
+        //set the repeat checklist array and add it to our updates to send
+        updatesToSend[HabiticaClient.TaskSchemaKeys.CHECKLIST] = RepeatingTask.makeChecklistArray(repeatValue, numFinRepeats: numFinRepeats)
     }
     
     @IBAction func prioritySelector(sender: UISegmentedControl)
     {
-        //print("priority selector value changed \(sender.selectedSegmentIndex)")
+        let priority = priorityConversionArray[sender.selectedSegmentIndex]
         
-        task?.priority = priorityConversionArray[sender.selectedSegmentIndex]
-    }
-    
-    @IBAction func cancel(sender: UIButton)
-    {
-        dismissViewControllerAnimated(true, completion: nil)
+        updatesToSend[HabiticaClient.TaskSchemaKeys.PRIORITY] = priority
     }
     
     @IBAction func save(sender: AnyObject)
     {
-        //TODO: send the updates to send dictionary to the habitica client's update existing task function.... or if we are modifying an existing task, send it to the make new task function
+        //send the updatesToSend dictionary to the habitica client's updateExistingTask function.... or if we are modifying an existing task, send it to the createNewTask function
+        if let makeNewTask = makeNewTask
+        {
+            //send the updates to Habitica
+            let uuid = NSUserDefaults.standardUserDefaults().valueForKey(HabiticaClient.UserDefaultKeys.UUID) as! String
+            let apiKey = NSUserDefaults.standardUserDefaults().valueForKey(HabiticaClient.UserDefaultKeys.ApiKey) as! String
+            
+            if(makeNewTask)
+            {
+                setWeeklyRepeatDefaults()
+                
+                updatesToSend[HabiticaClient.TaskSchemaKeys.TYPE] = "daily"
+                
+                HabiticaClient.sharedInstance.createNewTask(uuid, apiKey: apiKey, jsonBody: updatesToSend) { result, error in
+                    
+                    if let error = error
+                    {
+                        let failureString = error.localizedDescription
+                        self.showAlertController("Create New Task Error", message: failureString)
+                    }
+                    else
+                    {
+                        //save the context if te response from habitica is successful
+                        dispatch_async(dispatch_get_main_queue()) {
+                            
+                            CoreDataStackManager.sharedInstance().saveContext()
+                            
+                            self.navigationController?.popViewControllerAnimated(true)
+                        }
+                    }
+                }
+            }
+            else
+            {
+                HabiticaClient.sharedInstance.updateExistingTask(uuid, apiKey: apiKey, taskID: task!.id!, jsonBody: updatesToSend) { result, error in
+                    
+                    if let error = error
+                    {
+                        let failureString = error.localizedDescription
+                        self.showAlertController("Update Task Error", message: failureString)
+                    }
+                    else
+                    {
+                        //save the context if the response from habitica is successful
+                        dispatch_async(dispatch_get_main_queue()) {
+                            
+                            CoreDataStackManager.sharedInstance().saveContext()
+                            
+                            self.navigationController?.popViewControllerAnimated(true)
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            print("edited task saving error: makeNewTask boolean is not set")
+        }
     }
+    
+    //MARK -- Delegates
+    
+    func textViewDidChange(textView: UITextView)
+    {
+        updatesToSend[HabiticaClient.TaskSchemaKeys.NOTES] = textView.text
+    }
+    
     
     //MARK -- Configure Cells
     
@@ -139,5 +235,53 @@ class EditViewController: UIViewController, UITextFieldDelegate {
         repeatNumberBox.text = task.numRepeats.stringValue
         prioritySelector.selectedSegmentIndex = priorityConversionArray.indexOf(task.priority)!
         notesTextField.text = task.notes
+    }
+    
+    //MARK -- Helper Functions
+    
+    func setWeeklyRepeatDefaults()
+    {
+        if let isDaily = isDaily
+        {
+            if(!isDaily)
+            {
+                updatesToSend[HabiticaClient.TaskSchemaKeys.REPEAT] = [
+                    HabiticaClient.RepeatWeekdayKeys.SUN: true,
+                    HabiticaClient.RepeatWeekdayKeys.MON: false,
+                    HabiticaClient.RepeatWeekdayKeys.TUES: false,
+                    HabiticaClient.RepeatWeekdayKeys.WED: false,
+                    HabiticaClient.RepeatWeekdayKeys.THURS: false,
+                    HabiticaClient.RepeatWeekdayKeys.FRI: false,
+                    HabiticaClient.RepeatWeekdayKeys.SAT: false
+                ]
+            }
+            else
+            {
+                updatesToSend[HabiticaClient.TaskSchemaKeys.REPEAT] = [
+                    HabiticaClient.RepeatWeekdayKeys.SUN: true,
+                    HabiticaClient.RepeatWeekdayKeys.MON: true,
+                    HabiticaClient.RepeatWeekdayKeys.TUES: true,
+                    HabiticaClient.RepeatWeekdayKeys.WED: true,
+                    HabiticaClient.RepeatWeekdayKeys.THURS: true,
+                    HabiticaClient.RepeatWeekdayKeys.FRI: true,
+                    HabiticaClient.RepeatWeekdayKeys.SAT: true
+                ]
+            }
+        }
+        
+        updatesToSend[HabiticaClient.TaskSchemaKeys.CHECKLIST] = RepeatingTask.makeChecklistArray(Int(repeatStepper.value), numFinRepeats: 0)
+    }
+    
+    func showAlertController(title: String, message: String)
+    {
+        print("show alert controller")
+        dispatch_async(dispatch_get_main_queue()) {
+            
+            let alert: UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+            let okAction: UIAlertAction = UIAlertAction(title: "OK", style: .Cancel, handler: nil)
+            alert.addAction(okAction)
+            
+            self.presentViewController(alert, animated: true, completion: nil)
+        }
     }
 }

@@ -15,7 +15,6 @@ class TaskTableCell: UITableViewCell {
     @IBOutlet weak var checkBox: UIButton!
     @IBOutlet weak var textField: UILabel!
     @IBOutlet weak var checklistStatusLabel: UILabel!
-    @IBOutlet weak var dragButton: UIButton!
     @IBOutlet weak var editButton: UIButton!
     @IBOutlet weak var deleteButton: UIButton!
     
@@ -40,7 +39,7 @@ class TaskTableCell: UITableViewCell {
                 if(task.numRepeats.integerValue > 0)
                 {
                     //if the task has a checklist, make a new checklist array with the new correct number of tasks checked
-                    updatesToSend[HabiticaClient.TaskSchemaKeys.CHECKLIST] = makeChecklistArray(task.numRepeats.integerValue, numFinRepeats: task.numFinRepeats.integerValue-1)
+                    updatesToSend[HabiticaClient.TaskSchemaKeys.CHECKLIST] = RepeatingTask.makeChecklistArray(task.numRepeats.integerValue, numFinRepeats: task.numFinRepeats.integerValue-1)
                 }
                 
                 updatesToSend[HabiticaClient.TaskSchemaKeys.COMPLETED] = false
@@ -55,7 +54,7 @@ class TaskTableCell: UITableViewCell {
                     //task.numFinRepeats = task.numFinRepeats.integerValue + 1
                     
                     //if the task has a checklist, make a new checklist array with the new correct number of tasks checked
-                    updatesToSend[HabiticaClient.TaskSchemaKeys.CHECKLIST] = makeChecklistArray(task.numRepeats.integerValue, numFinRepeats: task.numFinRepeats.integerValue+1)
+                    updatesToSend[HabiticaClient.TaskSchemaKeys.CHECKLIST] = RepeatingTask.makeChecklistArray(task.numRepeats.integerValue, numFinRepeats: task.numFinRepeats.integerValue+1)
                     
                     if(task.numRepeats.integerValue == task.numFinRepeats.integerValue+1)
                     {
@@ -129,48 +128,6 @@ class TaskTableCell: UITableViewCell {
     }
     
     //MARK -- Helper Functions
-    
-    /*func isTimeToCheckOffWeeklyTask(taskLastUpdated: NSDate) -> Bool
-    {
-        let today = NSDate()
-        
-        //get the number of days in between the
-        let calendar = NSCalendar.currentCalendar()
-        let components = calendar.components([.Day], fromDate: taskLastUpdated, toDate: today, options: [])
-        let numDaysSinceChecklistCompleted = components.day
-        
-        let todaysWeekday = weekdayFromDate(today)
-        
-    }*/
-    
-    func makeChecklistArray(numRepeats: Int, numFinRepeats: Int) -> [[String: AnyObject]]
-    {
-        var checklistArray = [[String: AnyObject]]()
-        
-        var itr = 0
-        
-        while(numRepeats > itr)
-        {
-            var itemDict = [String: AnyObject]()
-            
-            if(numFinRepeats > itr)
-            {
-                itemDict[HabiticaClient.ChecklistBodyKeys.COMPLETED] = true
-            }
-            else
-            {
-                itemDict[HabiticaClient.ChecklistBodyKeys.COMPLETED] = false
-            }
-            
-            itr++
-            
-            itemDict[HabiticaClient.ChecklistBodyKeys.TEXT] = "\(itr)"
-            
-            checklistArray.append(itemDict)
-        }
-        
-        return checklistArray
-    }
     
     func weekdayFromDate(date: NSDate) -> String
     {

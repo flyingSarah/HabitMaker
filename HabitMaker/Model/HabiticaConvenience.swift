@@ -42,7 +42,7 @@ extension HabiticaClient {
                 }
                 else
                 {
-                    print("getTasks parse error: task results were nil")
+                    completionHandler(error: NSError(domain: "getTasks parse error", code: 0, userInfo: [NSLocalizedDescriptionKey: "task results were nil"]))
                 }
             }
         }
@@ -67,11 +67,40 @@ extension HabiticaClient {
                 }
                 else
                 {
-                    print("updateExistingTask parse error: task results were nil")
+                    completionHandler(result: nil, error: NSError(domain: "updateExistingTask parse error", code: 0, userInfo: [NSLocalizedDescriptionKey: "task results were nil"]))
                 }
             }
         }
         
         //TODO: if we are changing the completed state, I should inc or dec the score on habitica accordingly
+    }
+    
+    func createNewTask(uuid: String, apiKey: String, jsonBody: [String: AnyObject], completionHandler: (result: AnyObject?, error: NSError?) -> Void)
+    {
+        taskForPostMethod(HabiticaClient.Constants.TASK_METHODS, uuid: uuid, apiKey: apiKey, jsonBody: jsonBody) { JSONResult, error in
+            
+            if let error = error
+            {
+                completionHandler(result: nil, error: error)
+            }
+            else
+            {
+                if let task = JSONResult as? [String: AnyObject]
+                {
+                    if let reformattedTask = RepeatingTask.returnSingleTaskFromResults(task)
+                    {
+                        completionHandler(result: reformattedTask, error: nil)
+                    }
+                    else
+                    {
+                        print("error reformatting new task")
+                    }
+                }
+                else
+                {
+                    completionHandler(result: nil, error: NSError(domain: "createNewTask parse error", code: 0, userInfo: [NSLocalizedDescriptionKey: "task results were nil"]))
+                }
+            }
+        }
     }
 }

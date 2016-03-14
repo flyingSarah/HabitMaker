@@ -43,11 +43,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         uuidTextField.delegate = self
         apiKeyTextField.delegate = self
         
-        //set placeholder text color
-        //Found out how to do this from this stackoverflow topic: http://stackoverflow.com/questions/26076054/changing-placeholder-text-color-with-swift
-        //uuidTextField.attributedPlaceholder = NSAttributedString(string: "UUID", attributes: [NSForegroundColorAttributeName : UIColor.whiteColor()])
-        //apiKeyTextField.attributedPlaceholder = NSAttributedString(string: "API Key", attributes: [NSForegroundColorAttributeName : UIColor.whiteColor()])
-        
         //add a little left indent/padding on the text fields
         //Found how to do this from this stackoverflow topic: http://stackoverflow.com/questions/7565645/indent-the-text-in-a-uitextfield
         let uuidSpacerView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
@@ -97,11 +92,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     {
         super.viewWillDisappear(animated)
     }
-
-    /*override func didReceiveMemoryWarning()
-    {
-        super.didReceiveMemoryWarning()
-    }*/
     
     //MARK -- Core Data
     
@@ -129,7 +119,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 
                 //get the description of the specific error that results from the failed request
                 let failureString = error.localizedDescription
-                print("Login Error: \(failureString)")
+                self.showAlertController("Login Error", message: failureString)
             }
             else
             {
@@ -146,14 +136,25 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             }
         }
         
-        
-        print("loading tab bar view...")
         dispatch_async(dispatch_get_main_queue(), {
             
             let controller = self.storyboard!.instantiateViewControllerWithIdentifier("TabBarController") as! UITabBarController
             
             self.presentViewController(controller, animated: true, completion: nil)
         })
+    }
+    
+    //MARK -- Helper Functions
+    func showAlertController(title: String, message: String)
+    {
+        dispatch_async(dispatch_get_main_queue()) {
+            
+            let alert: UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+            let okAction: UIAlertAction = UIAlertAction(title: "OK", style: .Cancel, handler: nil)
+            alert.addAction(okAction)
+            
+            self.presentViewController(alert, animated: true, completion: nil)
+        }
     }
 }
 
