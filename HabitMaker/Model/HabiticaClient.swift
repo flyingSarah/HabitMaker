@@ -16,6 +16,9 @@ class HabiticaClient : NSObject {
     //shared session
     var session: NSURLSession
     
+    //useful variables
+    var tasksDownloading = false
+    
     override init()
     {
         session = NSURLSession.sharedSession()

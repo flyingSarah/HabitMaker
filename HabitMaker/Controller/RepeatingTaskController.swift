@@ -14,6 +14,7 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
     
     //MARK -- Outlets
     @IBOutlet var taskTable: UITableView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     //MARK -- Useful Variables
     var isDailyView = false
@@ -26,8 +27,6 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
-        print("loading \(navigationItem.title!)...")
         
         //set which view we are controlling
         if(navigationItem.title! == "Daily Tasks")
@@ -50,7 +49,20 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
     {
         super.viewWillAppear(animated)
         
-        //set up tasks
+        //set the completion behavior for when the tasks finish downloading
+        RepeatingTask.stopActivityIndicator = { [unowned self] () -> Void in
+            
+            self.stopActivityIndicator()
+        }
+        
+        //start the activity indicator animating if the tasks are currently downloading
+        if(HabiticaClient.sharedInstance.tasksDownloading)
+        {
+            print("start animating when view will appear")
+            activityIndicator.startAnimating()
+        }
+        
+        //fetch the tasks from the model
         do
         {
             try fetchedResultsController.performFetch()
@@ -77,6 +89,12 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
     
     func refreshButtonClicked(sender: AnyObject)
     {
+        dispatch_async(dispatch_get_main_queue()) {
+            
+            print("start animating when refresh button clicked")
+            self.activityIndicator.startAnimating()
+        }
+        
         //delete fetched results
         let fetchedObjects = fetchedResultsController.fetchedObjects
         
@@ -116,6 +134,8 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
             
             let controller = self.storyboard!.instantiateViewControllerWithIdentifier("EditViewController") as! EditViewController
             
+            controller.isDaily = self.isDailyView
+            
             self.presentViewController(controller, animated: true, completion: nil)
         })
     }
@@ -145,8 +165,18 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         let sectionInfo = fetchedResultsController.sections![section]
-        return sectionInfo.numberOfObjects
-        //return HabiticaClient.sharedInstance.weeklyTasks.count
+        
+        let numberOfObjects = sectionInfo.numberOfObjects
+        
+        /*print("number of rows in section \(numberOfObjects) \(HabiticaClient.sharedInstance.isDownloading) \(activityIndicator.isAnimating())")
+        
+        if(numberOfObjects == 0 && !HabiticaClient.sharedInstance.isDownloading && activityIndicator.isAnimating())
+        {
+            print("stop animating when numObjects is 0")
+            activityIndicator.stopAnimating()
+        }*/
+        
+        return numberOfObjects
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
@@ -160,6 +190,18 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         }
         
         return cell
+    }
+    
+    override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        
+        if(indexPath == tableView.indexPathsForVisibleRows?.last)
+        {
+            if(activityIndicator.isAnimating())
+            {
+                print("stop animaging when last cell is displayed")
+                activityIndicator.stopAnimating()
+            }
+        }
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
@@ -186,6 +228,14 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
     func controllerWillChangeContent(controller: NSFetchedResultsController)
     {
         tableView.beginUpdates()
+        
+        /*print("fetch will change content")
+        
+        if(!activityIndicator.isAnimating())
+        {
+            print("start animating with fetch will change content")
+            activityIndicator.startAnimating()
+        }*/
     }
     
     func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType)
@@ -246,8 +296,6 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         
         if(!task.isDaily && !task.completed && task.numRepeats == task.numFinRepeats && todaysWeekday == HabiticaClient.RepeatWeekdayKeys.SUN)
         {
-            //print("should send update for weekly task completed parameter. set to true")
-            
             HabiticaClient.sharedInstance.updateExistingTask(uuid, apiKey: apiKey, taskID: task.id!, jsonBody: [HabiticaClient.TaskSchemaKeys.COMPLETED: true]) { result, error in
                 
                 if let error = error
@@ -288,7 +336,7 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
             cell.checklistStatusLabel.hidden = true
         }
         
-        //set the completion handler for the task so clicking on the edit button will take you to the edit view
+        //set the completion handler for the cell's "presentEditViewHanlder" so that clicking on the edit button will take you to the edit view
         cell.presentEditViewHandler = { [unowned self] (task: RepeatingTask) -> Void in
             
             dispatch_async(dispatch_get_main_queue()) {
@@ -303,6 +351,25 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
     }
     
     //MARK -- Helper Functions
+    
+    func stopActivityIndicator()
+    {
+        print("stopActivityIndicator called")
+        
+        dispatch_async(dispatch_get_main_queue()) {
+            
+            print("stop animating with repeat task stop func")
+            self.activityIndicator.stopAnimating()
+            /*if(self.activityIndicator.isAnimating())
+            {
+                //TODO: figure out why this doesn't actually stop the indicator
+            }
+            else
+            {
+                print("activity indicator animating: \(self.activityIndicator.isAnimating())")
+            }*/
+        }
+    }
     
     func showAlertController(title: String, message: String)
     {

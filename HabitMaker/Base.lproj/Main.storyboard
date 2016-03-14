@@ -156,6 +156,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <activityIndicatorView key="tableFooterView" hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" id="N1n-Hf-aL8">
+                            <rect key="frame" x="0.0" y="130" width="600" height="20"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        </activityIndicatorView>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="TaskTableCell" id="HIE-Kh-heD" customClass="TaskTableCell" customModule="HabitMaker" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="86" width="600" height="44"/>
@@ -264,6 +268,7 @@
                     <navigationItem key="navigationItem" title="Weekly Tasks" id="r3v-CH-prq"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="activityIndicator" destination="N1n-Hf-aL8" id="gqg-eK-tIV"/>
                         <outlet property="taskTable" destination="F6G-GA-jJd" id="hhl-c4-G5T"/>
                     </connections>
                 </tableViewController>
@@ -517,6 +522,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <activityIndicatorView key="tableFooterView" hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" id="faI-Ax-ItQ">
+                            <rect key="frame" x="0.0" y="130" width="600" height="20"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        </activityIndicatorView>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="TaskTableCell" id="wO3-5X-ttE" customClass="TaskTableCell" customModule="HabitMaker" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="86" width="600" height="44"/>
@@ -625,6 +634,7 @@
                     <navigationItem key="navigationItem" title="Daily Tasks" id="zDz-Kx-0AX"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="activityIndicator" destination="faI-Ax-ItQ" id="Ukq-TL-m5b"/>
                         <outlet property="taskTable" destination="XGm-88-1X3" id="CN9-oU-02t"/>
                     </connections>
                 </tableViewController>

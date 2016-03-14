@@ -30,6 +30,8 @@ class RepeatingTask : NSManagedObject {
     @NSManaged var streak: NSNumber
     //@NSManaged var dateChecklistCompleted: NSDate?
     
+    static var stopActivityIndicator: (() -> Void)?
+    
     override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?)
     {
         super.init(entity: entity, insertIntoManagedObjectContext: context)
@@ -70,6 +72,8 @@ class RepeatingTask : NSManagedObject {
                 }
             }
         }
+        
+        stopActivityIndicator?()
     }
     
     static func returnSingleTaskFromResults(task: [String: AnyObject]) -> [String: AnyObject]?

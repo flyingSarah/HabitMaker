@@ -15,10 +15,13 @@ extension HabiticaClient {
     
     func getTasks(uuid: String, apiKey: String, completionHandler: (error: NSError?) -> Void)
     {
+        tasksDownloading = true
+        
         taskForGetMethod(HabiticaClient.Constants.TASK_METHODS, uuid: uuid, apiKey: apiKey) { JSONResult, error in
         
             if let error = error
             {
+                self.tasksDownloading = false
                 completionHandler(error: error)
             }
             else
@@ -31,6 +34,8 @@ extension HabiticaClient {
                         print("Successuflly found \(taskArray.count) total tasks from Habitica")
                         
                         RepeatingTask.makeTasksFromResults(taskArray)
+                        
+                        self.tasksDownloading = false
                         
                         completionHandler(error: nil)
                     }
