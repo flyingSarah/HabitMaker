@@ -81,8 +81,8 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         }
         else
         {
-            //this should never happen
-            print("Error opening Edit Task view: task is new and no type is known")
+            //this only happens if the edit view is left open and you tab back and forth between task types - the edit view should dissapear when that occurs
+            self.navigationController?.popViewControllerAnimated(true)
         }
     }
     
@@ -169,12 +169,17 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
                     }
                     else
                     {
-                        //save the context if te response from habitica is successful
-                        dispatch_async(dispatch_get_main_queue()) {
-                            
-                            CoreDataStackManager.sharedInstance().saveContext()
-                            
-                            self.navigationController?.popViewControllerAnimated(true)
+                        if let newTask = result as? [String: AnyObject]
+                        {
+                            dispatch_async(dispatch_get_main_queue()) {
+                                
+                                //create the repeating task for each of the chosen tasks
+                                let _ = RepeatingTask(repeatingTask: newTask, context: CoreDataStackManager.sharedInstance().managedObjectContext)
+                                
+                                CoreDataStackManager.sharedInstance().saveContext()
+                                
+                                self.navigationController?.popViewControllerAnimated(true)
+                            }
                         }
                     }
                 }

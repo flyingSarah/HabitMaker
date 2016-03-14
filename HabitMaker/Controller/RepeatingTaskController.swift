@@ -43,11 +43,15 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         let buttons = [refreshButton, addButton]
         
         navigationItem.rightBarButtonItems = buttons
+        
+        fetchedResultsController.delegate = self
     }
     
     override func viewWillAppear(animated: Bool)
     {
         super.viewWillAppear(animated)
+        
+        print("view will appear")
         
         //set the completion behavior for when the tasks finish downloading
         RepeatingTask.stopActivityIndicator = { [unowned self] () -> Void in
@@ -68,8 +72,6 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
             try fetchedResultsController.performFetch()
         }
         catch{}
-        
-        fetchedResultsController.delegate = self
         
         taskTable.reloadData()
     }
