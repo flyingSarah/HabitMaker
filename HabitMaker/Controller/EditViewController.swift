@@ -151,8 +151,8 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         if let makeNewTask = makeNewTask
         {
             //send the updates to Habitica
-            let uuid = NSUserDefaults.standardUserDefaults().valueForKey(HabiticaClient.UserDefaultKeys.UUID) as! String
-            let apiKey = NSUserDefaults.standardUserDefaults().valueForKey(HabiticaClient.UserDefaultKeys.ApiKey) as! String
+            let uuid = HabiticaClient.sharedInstance.uuid
+            let apiKey = HabiticaClient.sharedInstance.apiKey
             
             if(makeNewTask)
             {

@@ -19,9 +19,6 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
     //MARK -- Useful Variables
     var isDailyView = false
     
-    let uuid = NSUserDefaults.standardUserDefaults().valueForKey(HabiticaClient.UserDefaultKeys.UUID) as! String
-    let apiKey = NSUserDefaults.standardUserDefaults().valueForKey(HabiticaClient.UserDefaultKeys.ApiKey) as! String
-    
     //MARK -- Lifecycle
     
     override func viewDidLoad()
@@ -50,8 +47,6 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
     override func viewWillAppear(animated: Bool)
     {
         super.viewWillAppear(animated)
-        
-        print("view will appear")
         
         //set the completion behavior for when the tasks finish downloading
         RepeatingTask.stopActivityIndicator = { [unowned self] () -> Void in
@@ -83,7 +78,9 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         CoreDataStackManager.sharedInstance().deleteAllItemsInContext()
         
         NSUserDefaults.standardUserDefaults().setValue("", forKey: HabiticaClient.UserDefaultKeys.UUID)
+        HabiticaClient.sharedInstance.uuid = ""
         NSUserDefaults.standardUserDefaults().setValue("", forKey: HabiticaClient.UserDefaultKeys.ApiKey)
+        HabiticaClient.sharedInstance.apiKey = ""
         NSUserDefaults.standardUserDefaults().setBool(false, forKey: HabiticaClient.UserDefaultKeys.UserLoginAvailable)
         
         dismissViewControllerAnimated(true, completion: nil)
@@ -111,8 +108,10 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         //delete the rest of the items (the ones from the other task list)
         CoreDataStackManager.sharedInstance().deleteAllItemsInContext()
         
+        print("about to get all tasks from refresh with \(HabiticaClient.sharedInstance.uuid) and \(HabiticaClient.sharedInstance.apiKey)")
+        
         //get all the tasks
-        HabiticaClient.sharedInstance.getTasks(uuid, apiKey: apiKey) { error in
+        HabiticaClient.sharedInstance.getTasks(HabiticaClient.sharedInstance.uuid, apiKey: HabiticaClient.sharedInstance.apiKey) { error in
             
             if let error = error
             {
@@ -140,9 +139,6 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
             
             
             self.navigationController?.pushViewController(controller, animated: true)
-            //self.showViewController(controller, sender: self)
-            
-            //self.presentViewController(controller, animated: true, completion: nil)
         })
     }
     
@@ -284,7 +280,7 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         
         if(!task.isDaily && !task.completed && task.numRepeats == task.numFinRepeats && todaysWeekday == HabiticaClient.RepeatWeekdayKeys.SUN)
         {
-            HabiticaClient.sharedInstance.updateExistingTask(uuid, apiKey: apiKey, taskID: task.id!, jsonBody: [HabiticaClient.TaskSchemaKeys.COMPLETED: true]) { result, error in
+            HabiticaClient.sharedInstance.updateExistingTask(HabiticaClient.sharedInstance.uuid, apiKey: HabiticaClient.sharedInstance.apiKey, taskID: task.id!, jsonBody: [HabiticaClient.TaskSchemaKeys.COMPLETED: true]) { result, error in
                 
                 if let error = error
                 {

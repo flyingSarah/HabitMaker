@@ -35,6 +35,9 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" returnKeyType="done"/>
+                                <connections>
+                                    <action selector="textFieldsChanged:" destination="vXZ-lx-hvc" eventType="editingChanged" id="flV-JB-WQf"/>
+                                </connections>
                             </textField>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7ZT-0X-fwY">
                                 <rect key="frame" x="199" y="175" width="202" height="30"/>
@@ -72,14 +75,20 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" returnKeyType="done"/>
+                                <connections>
+                                    <action selector="textFieldsChanged:" destination="vXZ-lx-hvc" eventType="editingChanged" id="A4t-FA-tAv"/>
+                                </connections>
                             </textField>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RwV-Zs-Vx7">
+                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RwV-Zs-Vx7">
                                 <rect key="frame" x="32" y="318" width="536" height="30"/>
                                 <color key="backgroundColor" red="0.31372549019607843" green="0.71372549019607845" blue="0.90196078431372551" alpha="1" colorSpace="calibratedRGB"/>
                                 <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="15"/>
                                 <state key="normal" title="Continue">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="disabled">
+                                    <color key="titleColor" white="0.66666666669999997" alpha="0.5" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
                                     <action selector="loginButtonPressed:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="mgl-Ee-ElK"/>
@@ -96,6 +105,9 @@
                                     <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="signUp:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="orl-4f-iK8"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="0.2627450980392157" green="0.16862745098039217" blue="0.44705882352941173" alpha="1" colorSpace="calibratedRGB"/>
@@ -174,6 +186,9 @@
                                                 <constraint firstAttribute="width" secondItem="dG4-0I-XkI" secondAttribute="height" multiplier="1:1" id="afv-dB-bHQ"/>
                                             </constraints>
                                             <state key="normal" title="delete" image="deleteIcon"/>
+                                            <connections>
+                                                <action selector="deleteButtonClicked:" destination="HIE-Kh-heD" eventType="touchUpInside" id="teo-zW-eyd"/>
+                                            </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KfJ-AH-S3X">
                                             <rect key="frame" x="544" y="12" width="20" height="20"/>
@@ -504,6 +519,9 @@
                                                 <constraint firstAttribute="width" secondItem="YVH-CJ-nRI" secondAttribute="height" multiplier="1:1" id="j1z-Gp-63X"/>
                                             </constraints>
                                             <state key="normal" title="delete" image="deleteIcon"/>
+                                            <connections>
+                                                <action selector="deleteButtonClicked:" destination="wO3-5X-ttE" eventType="touchUpInside" id="vVu-kD-KG7"/>
+                                            </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NxY-1H-DcA">
                                             <rect key="frame" x="544" y="12" width="20" height="20"/>

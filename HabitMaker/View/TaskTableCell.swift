@@ -83,10 +83,7 @@ class TaskTableCell: UITableViewCell {
             }
             
             //send the updates to Habitica
-            let uuid = NSUserDefaults.standardUserDefaults().valueForKey(HabiticaClient.UserDefaultKeys.UUID) as! String
-            let apiKey = NSUserDefaults.standardUserDefaults().valueForKey(HabiticaClient.UserDefaultKeys.ApiKey) as! String
-            
-            HabiticaClient.sharedInstance.updateExistingTask(uuid, apiKey: apiKey, taskID: task.id!, jsonBody: updatesToSend) { result, error in
+            HabiticaClient.sharedInstance.updateExistingTask(HabiticaClient.sharedInstance.uuid, apiKey: HabiticaClient.sharedInstance.apiKey, taskID: task.id!, jsonBody: updatesToSend) { result, error in
                 
                 if let error = error
                 {
@@ -126,6 +123,30 @@ class TaskTableCell: UITableViewCell {
     {
         presentEditViewHandler?(task: repeatingTask!)
     }
+    
+    @IBAction func deleteButtonClicked(sender: UIButton)
+    {
+        if let task = repeatingTask
+        {
+            HabiticaClient.sharedInstance.deleteTask(HabiticaClient.sharedInstance.uuid, apiKey: HabiticaClient.sharedInstance.apiKey, taskId: task.id!) { error in
+                
+                if let error = error
+                {
+                    let failureString = error.localizedDescription
+                    print("Delete Task Error: \(failureString)")
+                }
+                else
+                {
+                    dispatch_async(dispatch_get_main_queue()) {
+                        
+                        CoreDataStackManager.sharedInstance().managedObjectContext.deleteObject(task)
+                        CoreDataStackManager.sharedInstance().saveContext()
+                    }
+                }
+            }
+        }
+    }
+    
     
     //MARK -- Helper Functions
     

@@ -103,4 +103,19 @@ extension HabiticaClient {
             }
         }
     }
+    
+    func deleteTask(uuid: String, apiKey: String, taskId: String, completionHandler: (error: NSError?) -> Void)
+    {
+        taskForDeleteMethod(HabiticaClient.Constants.TASK_METHODS, uuid: uuid, apiKey: apiKey, idForTaskToUpdate: taskId) { JSONResult, error in
+            
+            if let error = error
+            {
+                completionHandler(error: error)
+            }
+            else
+            {
+                completionHandler(error: nil)
+            }
+        }
+    }
 }

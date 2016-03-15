@@ -19,6 +19,9 @@ class HabiticaClient : NSObject {
     //useful variables
     var tasksDownloading = false
     
+    var uuid = ""
+    var apiKey = ""
+    
     override init()
     {
         session = NSURLSession.sharedSession()
@@ -128,6 +131,39 @@ class HabiticaClient : NSObject {
             print("Habitica Client Post Method HTTP Body error: \(error.description)")
             request.HTTPBody = nil
         }
+        
+        //make the request
+        let task = session.dataTaskWithRequest(request) {data, response, downloadError in
+            
+            //parse and use the data
+            if let error = downloadError
+            {
+                let newError = HabiticaClient.errorForData(data, response: response, error: error)
+                completionHandler(result: nil, error: newError)
+            }
+            else
+            {
+                HabiticaClient.parseJSONWithCompletionHandler(data!, completionHandler: completionHandler)
+            }
+        }
+        
+        task.resume()
+        return task
+    }
+    
+    //MARK -- Delete Task
+    
+    func taskForDeleteMethod(method: String, uuid: String, apiKey: String, idForTaskToUpdate: String, completionHandler: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask
+    {
+        //build the URL and configure the request
+        let urlString = HabiticaClient.Constants.BASE_URL + method + idForTaskToUpdate
+        print("attempting to request the following url: \(urlString)")
+        let url = NSURL(string: urlString)!
+        let request = NSMutableURLRequest(URL: url)
+        
+        request.HTTPMethod = "DELETE"
+        request.addValue(uuid, forHTTPHeaderField: HabiticaClient.HeaderArgumentKeys.API_USER)
+        request.addValue(apiKey, forHTTPHeaderField: HabiticaClient.HeaderArgumentKeys.API_KEY)
         
         //make the request
         let task = session.dataTaskWithRequest(request) {data, response, downloadError in
