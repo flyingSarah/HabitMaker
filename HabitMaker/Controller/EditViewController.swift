@@ -32,6 +32,8 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
     
     let priorityConversionArray = [0.1, 1.0, 1.5, 2.0] //to easily convert priority parameters to and from Habitica's format (values of the array) and the format the priority selector uses (indexes of the array)
     
+    var tapRecognizer: UITapGestureRecognizer? = nil
+    
     //MARK -- Lifecycle
     
     override func viewDidLoad()
@@ -48,11 +50,18 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         taskTitleField.leftView = taskTitleSpacerView
         
         repeatStepper.maximumValue = 100
+        
+        //initialize tap recognizer
+        tapRecognizer = UITapGestureRecognizer(target: self, action: Selector("handleSingleTap:"))
+        tapRecognizer!.numberOfTapsRequired = 1
     }
     
     override func viewWillAppear(animated: Bool)
     {
         super.viewWillAppear(animated)
+        
+        addKeyboardDismissRecognizer()
+        subscribeToKeyboardNotifications()
         
         //find out if editing an existing task or creating a new one
         if let task = task
@@ -90,6 +99,9 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
     {
         super.viewWillDisappear(animated)
         
+        removeKeyboardDismissRecognizer()
+        unsubscribeFromKeyboardNotifications()
+        
         task = nil
         isDaily = nil
         
@@ -115,6 +127,12 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
             saveButton.enabled = true
         }
         
+        if let task = task
+        {
+            task.text = sender.text!
+        }
+        
+        
         updatesToSend[HabiticaClient.TaskSchemaKeys.TEXT] = sender.text!
     }
     
@@ -128,10 +146,18 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         
         if let task = task
         {
-            if(task.numFinRepeats.integerValue > task.numRepeats.integerValue)
+            //the number of finished repeats shouldn't be greater than the number of repeats
+            if(task.numFinRepeats.integerValue > repeatValue)
             {
-                numFinRepeats = task.numRepeats.integerValue
+                numFinRepeats = repeatValue
             }
+            else
+            {
+                numFinRepeats = task.numFinRepeats.integerValue
+            }
+            
+            task.numFinRepeats = numFinRepeats
+            task.numRepeats = repeatValue
         }
         
         //set the repeat checklist array and add it to our updates to send
@@ -142,11 +168,18 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
     {
         let priority = priorityConversionArray[sender.selectedSegmentIndex]
         
+        if let task = task
+        {
+            task.priority = priority
+        }
+        
         updatesToSend[HabiticaClient.TaskSchemaKeys.PRIORITY] = priority
     }
     
     @IBAction func save(sender: AnyObject)
     {
+        dismissAnyVisibleKeyboards()
+        
         //send the updatesToSend dictionary to the habitica client's updateExistingTask function.... or if we are modifying an existing task, send it to the createNewTask function
         if let makeNewTask = makeNewTask
         {
@@ -208,7 +241,7 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         }
         else
         {
-            print("edited task saving error: makeNewTask boolean is not set")
+            showAlertController("Edit Task Saving Error", message: "creating new or editing existing - definition ambiguous")
         }
     }
     
@@ -216,6 +249,11 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
     
     func textViewDidChange(textView: UITextView)
     {
+        if let task = task
+        {
+            task.notes = textView.text
+        }
+        
         updatesToSend[HabiticaClient.TaskSchemaKeys.NOTES] = textView.text
     }
     
@@ -279,7 +317,6 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
     
     func showAlertController(title: String, message: String)
     {
-        print("show alert controller")
         dispatch_async(dispatch_get_main_queue()) {
             
             let alert: UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
@@ -287,6 +324,81 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
             alert.addAction(okAction)
             
             self.presentViewController(alert, animated: true, completion: nil)
+        }
+    }
+    
+    //dismiss the keyboard
+    func addKeyboardDismissRecognizer()
+    {
+    view.addGestureRecognizer(tapRecognizer!)
+    }
+    
+    func removeKeyboardDismissRecognizer()
+    {
+        view.removeGestureRecognizer(tapRecognizer!)
+    }
+    
+    func handleSingleTap(recognizer: UITapGestureRecognizer)
+    {
+        view.endEditing(true)
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool
+    {
+        view.endEditing(true)
+        return true
+    }
+    
+    //Shifting the keyboard so it does not hide controls
+    func subscribeToKeyboardNotifications()
+    {
+        //subscribe to keyboardWillShow & keyboardWillHide notifications
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    func unsubscribeFromKeyboardNotifications()
+    {
+        //unsubscribe from keyboardWillShow & keyboardWillHide notifications
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+        //NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    func keyboardWillShow(notification: NSNotification)
+    {
+        //shift the view's frame up so that controls are shown
+        if(notesTextField.isFirstResponder())
+        {
+            view.frame.origin.y = -getKeyboardHeight(notification)
+        }
+    }
+    
+    func keyboardWillHide(notification: NSNotification)
+    {
+        //shift the view's frame back down so that the view is back to its original placement
+        if(notesTextField.isFirstResponder())
+        {
+            view.frame.origin.y = 0
+        }
+    }
+    
+    func getKeyboardHeight(notification: NSNotification) -> CGFloat
+    {
+        //get and return the keyboard's height from the notification
+        let userInfo = notification.userInfo
+        let keyboardSize = userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue //of CGRect
+        
+        return keyboardSize.CGRectValue().height
+    }
+}
+
+extension EditViewController {
+    
+    func dismissAnyVisibleKeyboards()
+    {
+        if(taskTitleField.isFirstResponder() || notesTextField.isFirstResponder())
+        {
+            view.endEditing(true)
         }
     }
 }

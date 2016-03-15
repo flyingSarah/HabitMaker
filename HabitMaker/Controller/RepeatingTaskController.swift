@@ -57,7 +57,6 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         //start the activity indicator animating if the tasks are currently downloading
         if(HabiticaClient.sharedInstance.tasksDownloading)
         {
-            print("start animating when view will appear")
             activityIndicator.startAnimating()
         }
         
@@ -90,7 +89,6 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
     {
         dispatch_async(dispatch_get_main_queue()) {
             
-            print("start animating when refresh button clicked")
             self.activityIndicator.startAnimating()
         }
         
@@ -107,8 +105,6 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         
         //delete the rest of the items (the ones from the other task list)
         CoreDataStackManager.sharedInstance().deleteAllItemsInContext()
-        
-        print("about to get all tasks from refresh with \(HabiticaClient.sharedInstance.uuid) and \(HabiticaClient.sharedInstance.apiKey)")
         
         //get all the tasks
         HabiticaClient.sharedInstance.getTasks(HabiticaClient.sharedInstance.uuid, apiKey: HabiticaClient.sharedInstance.apiKey) { error in
@@ -190,7 +186,6 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         {
             if(activityIndicator.isAnimating())
             {
-                print("stop animaging when last cell is displayed")
                 activityIndicator.stopAnimating()
             }
         }
@@ -332,6 +327,12 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
                 self.navigationController?.pushViewController(controller, animated: true)
             }
         }
+        
+        //set the completion handler for the cell's "alertErrorHandler" so when errors occur within the cell, the alert controller will show
+        cell.alertErrorHandler = { [unowned self] (title: String, message: String) -> Void in
+            
+            self.showAlertController(title, message: message)
+        }
     }
     
     //MARK -- Helper Functions
@@ -340,7 +341,6 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
     {
         dispatch_async(dispatch_get_main_queue()) {
             
-            print("stop animating with repeat task stop func")
             self.activityIndicator.stopAnimating()
         }
     }

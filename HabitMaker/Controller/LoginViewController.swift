@@ -119,16 +119,55 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    @IBAction func signUp(sender: UIButton)
+    @IBAction func signUpButtonPressed(sender: UIButton)
+    {
+        signUp()
+    }
+    
+    func signUp()
     {
         let url = NSURL(string: "https://habitica.com/static/front")!
         UIApplication.sharedApplication().openURL(url)
     }
     
+    @IBAction func infoButtonPressed(sender: UIButton)
+    {
+        dispatch_async(dispatch_get_main_queue()) {
+            
+            let alert: UIAlertController = UIAlertController(title: "Login UUID and API Key...", message: "... can be found in settings/API after signing up on Habitica.com.", preferredStyle: .Alert)
+            
+            let closeAction: UIAlertAction = UIAlertAction(title: "Close", style: .Cancel, handler: nil)
+            
+            let signUpAction: UIAlertAction = UIAlertAction(title: "Sign Up", style: .Default) { _ in
+                
+                dispatch_async(dispatch_get_main_queue()) {
+                    
+                    self.signUp()
+                }
+            }
+            
+            let findLoginInfo: UIAlertAction = UIAlertAction(title: "Find UUID", style: .Default) { _ in
+                
+                dispatch_async(dispatch_get_main_queue()) {
+                    
+                    let url = NSURL(string: "https://habitica.com/#/options/settings/api")!
+                    UIApplication.sharedApplication().openURL(url)
+                }
+            }
+            
+            alert.addAction(closeAction)
+            alert.addAction(signUpAction)
+            alert.addAction(findLoginInfo)
+            
+            self.presentViewController(alert, animated: true, completion: nil)
+        }
+    }
     
     
     func loginToHabitica(uuid: String, apiKey: String)
     {
+        dismissAnyVisibleKeyboards()
+        
         HabiticaClient.sharedInstance.getTasks(uuid, apiKey: apiKey) { error in
             
             if let error = error

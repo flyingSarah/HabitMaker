@@ -23,6 +23,7 @@ class TaskTableCell: UITableViewCell {
     var repeatingTask: RepeatingTask? = nil
     
     var presentEditViewHandler: ((task: RepeatingTask) -> Void)?
+    var alertErrorHandler: ((title: String, message: String) -> Void)?
     
     //MARK -- Actions
 
@@ -88,7 +89,7 @@ class TaskTableCell: UITableViewCell {
                 if let error = error
                 {
                     let failureString = error.localizedDescription
-                    print("Update CheckBox State Error: \(failureString)")
+                    self.alertErrorHandler?(title: "Update CheckBox State Error", message: failureString)
                 }
                 else
                 {
@@ -106,7 +107,7 @@ class TaskTableCell: UITableViewCell {
                     }
                     else
                     {
-                        print("Update CheckBox State Error: couldn't convert result to dictionary")
+                        self.alertErrorHandler?(title: "Update CheckBox State Error", message: "couldn't convert result to dictionary")
                     }
                     
                 }
@@ -133,7 +134,7 @@ class TaskTableCell: UITableViewCell {
                 if let error = error
                 {
                     let failureString = error.localizedDescription
-                    print("Delete Task Error: \(failureString)")
+                    self.alertErrorHandler?(title: "Delete Task Error", message: failureString)
                 }
                 else
                 {

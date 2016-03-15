@@ -54,6 +54,9 @@
                                             <constraint firstAttribute="width" constant="22" id="jUF-Hs-0z7"/>
                                         </constraints>
                                         <color key="tintColor" red="0.99607843139999996" green="0.38823529410000002" blue="0.41176470590000003" alpha="1" colorSpace="calibratedRGB"/>
+                                        <connections>
+                                            <action selector="infoButtonPressed:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="zyt-Up-hkI"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -106,7 +109,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="signUp:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="orl-4f-iK8"/>
+                                    <action selector="signUpButtonPressed:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="qdg-lZ-MMd"/>
                                 </connections>
                             </button>
                         </subviews>
