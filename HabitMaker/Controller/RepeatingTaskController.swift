@@ -280,10 +280,17 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         
         if(!task.isDaily && !task.completed && task.numRepeats == task.numFinRepeats && todaysWeekday == HabiticaClient.RepeatWeekdayKeys.SUN)
         {
+            cell.activityIndicator.startAnimating()
+            
             HabiticaClient.sharedInstance.updateExistingTask(HabiticaClient.sharedInstance.uuid, apiKey: HabiticaClient.sharedInstance.apiKey, taskID: task.id!, jsonBody: [HabiticaClient.TaskSchemaKeys.COMPLETED: true]) { result, error in
                 
                 if let error = error
                 {
+                    dispatch_async(dispatch_get_main_queue()) {
+                        
+                        cell.activityIndicator.stopAnimating()
+                    }
+                    
                     let failureString = error.localizedDescription
                     self.showAlertController("Configure Cell Error", message: failureString)
                 }
@@ -301,7 +308,13 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
                     }
                     else
                     {
-                        print("Configure Cell Error: couldn't convert result to dictionary")
+                        
+                        self.showAlertController("Configure Cell Error", message: "couldn't convert result to dictionary")
+                    }
+                    
+                    dispatch_async(dispatch_get_main_queue()) {
+                        
+                        self.activityIndicator.stopAnimating()
                     }
                     
                 }

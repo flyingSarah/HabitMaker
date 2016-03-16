@@ -31,7 +31,7 @@ extension HabiticaClient {
                     
                     if(taskArray.count > 0)
                     {
-                        print("Successuflly found \(taskArray.count) total tasks from Habitica")
+                        //print("Successuflly found \(taskArray.count) total tasks from Habitica")
                         
                         RepeatingTask.makeTasksFromResults(taskArray)
                         
@@ -88,10 +88,6 @@ extension HabiticaClient {
                     if let reformattedTask = RepeatingTask.returnSingleTaskFromResults(task)
                     {
                         completionHandler(result: reformattedTask, error: nil)
-                    }
-                    else
-                    {
-                        print("error reformatting new task")
                     }
                 }
                 else

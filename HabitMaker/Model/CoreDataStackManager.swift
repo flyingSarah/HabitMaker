@@ -119,7 +119,7 @@ class CoreDataStackManager {
         
         if #available(iOS 9.0, *)
         {
-            print("deleting all in iOS 9.0")
+            //print("deleting all in iOS 9.0")
             let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
             
             //perform the delete
@@ -135,7 +135,7 @@ class CoreDataStackManager {
         }
         else
         {
-            print("deleting all in iOS < 9.0")
+            //print("deleting all in iOS < 9.0")
             // Fallback on earlier versions
             let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
             let fetchedObjects = fetchedResultsController.fetchedObjects

@@ -17,6 +17,8 @@ class TaskTableCell: UITableViewCell {
     @IBOutlet weak var checklistStatusLabel: UILabel!
     @IBOutlet weak var editButton: UIButton!
     @IBOutlet weak var deleteButton: UIButton!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    
     
     //MARK -- Useful Variables
     
@@ -29,6 +31,8 @@ class TaskTableCell: UITableViewCell {
 
     @IBAction func checkBoxButtonPressed(sender: UIButton)
     {
+        activityIndicator.startAnimating()
+        
         if let task = repeatingTask
         {
             //we're going to prep a dictionary to act as the json body of a Habitica PUT task
@@ -88,6 +92,11 @@ class TaskTableCell: UITableViewCell {
                 
                 if let error = error
                 {
+                    dispatch_async(dispatch_get_main_queue()) {
+                        
+                        self.activityIndicator.stopAnimating()
+                    }
+                    
                     let failureString = error.localizedDescription
                     self.alertErrorHandler?(title: "Update CheckBox State Error", message: failureString)
                 }
@@ -103,6 +112,8 @@ class TaskTableCell: UITableViewCell {
                         dispatch_async(dispatch_get_main_queue()) {
                             
                             CoreDataStackManager.sharedInstance().saveContext()
+                            
+                            self.activityIndicator.stopAnimating()
                         }
                     }
                     else
@@ -127,12 +138,19 @@ class TaskTableCell: UITableViewCell {
     
     @IBAction func deleteButtonClicked(sender: UIButton)
     {
+        activityIndicator.startAnimating()
+        
         if let task = repeatingTask
         {
             HabiticaClient.sharedInstance.deleteTask(HabiticaClient.sharedInstance.uuid, apiKey: HabiticaClient.sharedInstance.apiKey, taskId: task.id!) { error in
                 
                 if let error = error
                 {
+                    dispatch_async(dispatch_get_main_queue()) {
+                        
+                        self.activityIndicator.stopAnimating()
+                    }
+                    
                     let failureString = error.localizedDescription
                     self.alertErrorHandler?(title: "Delete Task Error", message: failureString)
                 }
@@ -142,6 +160,8 @@ class TaskTableCell: UITableViewCell {
                         
                         CoreDataStackManager.sharedInstance().managedObjectContext.deleteObject(task)
                         CoreDataStackManager.sharedInstance().saveContext()
+                        
+                        self.activityIndicator.stopAnimating()
                     }
                 }
             }

@@ -19,6 +19,7 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
     @IBOutlet weak var notesTextField: UITextView!
     @IBOutlet weak var repetitionsLabel: UILabel!
     @IBOutlet weak var saveButton: UIButton!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     //MARK -- Useful Variables
     
@@ -178,6 +179,8 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
     
     @IBAction func save(sender: AnyObject)
     {
+        activityIndicator.startAnimating()
+        
         dismissAnyVisibleKeyboards()
         
         //send the updatesToSend dictionary to the habitica client's updateExistingTask function.... or if we are modifying an existing task, send it to the createNewTask function
@@ -197,6 +200,11 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
                     
                     if let error = error
                     {
+                        dispatch_async(dispatch_get_main_queue()) {
+                            
+                            self.activityIndicator.stopAnimating()
+                        }
+                        
                         let failureString = error.localizedDescription
                         self.showAlertController("Create New Task Error", message: failureString)
                     }
@@ -211,6 +219,8 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
                                 
                                 CoreDataStackManager.sharedInstance().saveContext()
                                 
+                                self.activityIndicator.stopAnimating()
+                                
                                 self.navigationController?.popViewControllerAnimated(true)
                             }
                         }
@@ -223,6 +233,11 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
                     
                     if let error = error
                     {
+                        dispatch_async(dispatch_get_main_queue()) {
+                            
+                            self.activityIndicator.stopAnimating()
+                        }
+                        
                         let failureString = error.localizedDescription
                         self.showAlertController("Update Task Error", message: failureString)
                     }
@@ -233,6 +248,8 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
                             
                             CoreDataStackManager.sharedInstance().saveContext()
                             
+                            self.activityIndicator.stopAnimating()
+                            
                             self.navigationController?.popViewControllerAnimated(true)
                         }
                     }
@@ -241,6 +258,8 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         }
         else
         {
+            activityIndicator.stopAnimating()
+            
             showAlertController("Edit Task Saving Error", message: "creating new or editing existing - definition ambiguous")
         }
     }

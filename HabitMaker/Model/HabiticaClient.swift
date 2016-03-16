@@ -67,7 +67,7 @@ class HabiticaClient : NSObject {
     {
         //build the URL and configure the request
         let urlString = HabiticaClient.Constants.BASE_URL + method + idForTaskToUpdate
-        print("attempting to request the following url: \(urlString)")
+        //print("attempting to request the following url: \(urlString)")
         let url = NSURL(string: urlString)!
         let request = NSMutableURLRequest(URL: url)
         
@@ -85,6 +85,7 @@ class HabiticaClient : NSObject {
         {
             print("Habitica Client Put Method HTTP Body error: \(error.description)")
             request.HTTPBody = nil
+            completionHandler(result: nil, error: error)
         }
         
         //make the request
@@ -112,7 +113,7 @@ class HabiticaClient : NSObject {
     {
         //build the URL and configure the request
         let urlString = HabiticaClient.Constants.BASE_URL + method
-        print("attempting to request the following url: \(urlString)")
+        //print("attempting to request the following url: \(urlString)")
         let url = NSURL(string: urlString)!
         let request = NSMutableURLRequest(URL: url)
         
@@ -128,6 +129,7 @@ class HabiticaClient : NSObject {
         }
         catch let error as NSError
         {
+            completionHandler(result: nil, error: error)
             print("Habitica Client Post Method HTTP Body error: \(error.description)")
             request.HTTPBody = nil
         }
@@ -157,7 +159,7 @@ class HabiticaClient : NSObject {
     {
         //build the URL and configure the request
         let urlString = HabiticaClient.Constants.BASE_URL + method + idForTaskToUpdate
-        print("attempting to request the following url: \(urlString)")
+        //print("attempting to request the following url: \(urlString)")
         let url = NSURL(string: urlString)!
         let request = NSMutableURLRequest(URL: url)
         
@@ -190,7 +192,11 @@ class HabiticaClient : NSObject {
     //given a response with error, see if a status_message is returned, otherwise return the previous error
     class func errorForData(data: NSData?, response: NSURLResponse?, error: NSError?) -> NSError
     {
-        if let parsedResult = (try? NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)) as? [String : AnyObject]
+        if let error = error
+        {
+            return error
+        }
+        else if let parsedResult = (try? NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)) as? [String : AnyObject]
         {
             if let errorMessage = parsedResult[HabiticaClient.JSONResponseKeys.ERROR_MESSAGE] as? String
             {
@@ -203,6 +209,11 @@ class HabiticaClient : NSObject {
                 
                 return NSError(domain: "Habitica Parse Error", code: 0, userInfo: userInfo)
             }
+        }
+        else
+        {
+            return NSError(domain: "Habitica Client Error", code: 0, userInfo: [NSLocalizedDescriptionKey: "error in errorForData"])
+            //print("error in errorForData")
         }
         
         return error!

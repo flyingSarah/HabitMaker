@@ -18,6 +18,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet weak var loginButton: UIButton!
     
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    
     //MARK -- Variables
     
     var tapRecognizer: UITapGestureRecognizer? = nil
@@ -57,7 +59,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
         if(userLoginAvailable)
         {
-            print("a user login is available")
+            //print("a user login is available")
+            
+            activityIndicator.startAnimating()
             
             //sync data every time you log in by deleting the objects and then re-downloading them
             CoreDataStackManager.sharedInstance().deleteAllItemsInContext()
@@ -73,7 +77,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         }
         else
         {
-            print("a user login is not available")
+            //print("a user login is not available")
             
             uuidTextField.text = ""
             HabiticaClient.sharedInstance.uuid = ""
@@ -101,6 +105,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func loginButtonPressed(sender: UIButton)
     {
+        activityIndicator.startAnimating()
+        
         HabiticaClient.sharedInstance.uuid = uuidTextField.text!
         HabiticaClient.sharedInstance.apiKey = apiKeyTextField.text!
         
@@ -174,6 +180,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             {
                 NSUserDefaults.standardUserDefaults().setBool(false, forKey: HabiticaClient.UserDefaultKeys.UserLoginAvailable)
                 
+                dispatch_async(dispatch_get_main_queue()) {
+                    
+                    self.activityIndicator.stopAnimating()
+                }
+                
                 //get the description of the specific error that results from the failed request
                 let failureString = error.localizedDescription
                 self.showAlertController("Login Error", message: failureString)
@@ -189,6 +200,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 dispatch_async(dispatch_get_main_queue()) {
                     
                     CoreDataStackManager.sharedInstance().saveContext()
+                    
+                    self.activityIndicator.stopAnimating()
                     
                     let controller = self.storyboard!.instantiateViewControllerWithIdentifier("TabBarController") as! UITabBarController
                     
