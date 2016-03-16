@@ -19,6 +19,11 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
     //MARK -- Useful Variables
     var isDailyView = false
     
+    let redTaskColor = UIColor(red: 0.996, green: 0.388, blue: 0.412, alpha: 0.5)
+    let yellowTaskColor = UIColor(red: 1.0, green: 1.0, blue: 0.2, alpha: 0.5)
+    let greenTaskColor = UIColor(red: 0.18, green: 0.722, blue: 0.18, alpha: 0.5)
+    let blueTaskColor = UIColor(red: 0.314, green: 0.714, blue: 0.902, alpha: 0.5)
+    
     //MARK -- Lifecycle
     
     override func viewDidLoad()
@@ -149,7 +154,7 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         
         let fetchRequest = NSFetchRequest(entityName: "RepeatingTask")
         
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: HabiticaClient.TaskSchemaKeys.PRIORITY, ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: HabiticaClient.TaskSchemaKeys.PRIORITY, ascending: false)]
         fetchRequest.predicate = NSPredicate(format: "isDaily == %@", NSNumber(bool: self.isDailyView))
         
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.sharedContext, sectionNameKeyPath: nil, cacheName: nil)
@@ -313,6 +318,19 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         else
         {
             cell.checklistStatusLabel.hidden = true
+        }
+        
+        //set the background color based on priority
+        switch task.priority
+        {
+        case 1.0:
+            cell.backgroundColor = greenTaskColor
+        case 1.5:
+            cell.backgroundColor = yellowTaskColor
+        case 2.0:
+            cell.backgroundColor = redTaskColor
+        default:
+            cell.backgroundColor = blueTaskColor
         }
         
         //set the completion handler for the cell's "presentEditViewHanlder" so that clicking on the edit button will take you to the edit view

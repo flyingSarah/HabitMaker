@@ -71,8 +71,6 @@ extension HabiticaClient {
                 }
             }
         }
-        
-        //TODO: if we are changing the completed state, I should inc or dec the score on habitica accordingly
     }
     
     func createNewTask(uuid: String, apiKey: String, jsonBody: [String: AnyObject], completionHandler: (result: AnyObject?, error: NSError?) -> Void)
