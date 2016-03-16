@@ -105,7 +105,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func loginButtonPressed(sender: UIButton)
     {
-        activityIndicator.startAnimating()
+        dispatch_async(dispatch_get_main_queue()) {
+            
+            self.activityIndicator.startAnimating()
+        }
         
         HabiticaClient.sharedInstance.uuid = uuidTextField.text!
         HabiticaClient.sharedInstance.apiKey = apiKeyTextField.text!

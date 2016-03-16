@@ -75,6 +75,13 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         taskTable.reloadData()
     }
     
+    override func viewWillDisappear(animated: Bool)
+    {
+        super.viewWillDisappear(animated)
+        
+        RepeatingTask.stopActivityIndicator = nil
+    }
+    
     //MARK -- Navigation Bar Actions
     
     func logout(sender: AnyObject)
@@ -116,6 +123,11 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
             
             if let error = error
             {
+                dispatch_async(dispatch_get_main_queue()) {
+                    
+                    self.activityIndicator.stopAnimating()
+                }
+                
                 //get the description of the specific error that results from the failed request
                 let failureString = error.localizedDescription
                 self.showAlertController("Error Refreshing Tasks", message: failureString)
