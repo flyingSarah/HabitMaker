@@ -17,7 +17,7 @@ extension HabiticaClient {
     {
         tasksDownloading = true
         
-        taskForGetMethod(HabiticaClient.Constants.TASK_METHODS, uuid: uuid, apiKey: apiKey) { JSONResult, error in
+        taskForGetMethod(HabiticaClient.Constants.TASKS_USER_METHOD, uuid: uuid, apiKey: apiKey) { JSONResult, error in
         
             if let error = error
             {
@@ -26,23 +26,30 @@ extension HabiticaClient {
             }
             else
             {
-                if let taskArray = JSONResult as? [[String : AnyObject]]
+                if let dataArray = JSONResult as? [String: AnyObject]
                 {
-                    
-                    if(taskArray.count > 0)
+                    if let taskArray = dataArray[JSONResponseKeys.DATA] as? [[String : AnyObject]]
                     {
-                        //print("Successuflly found \(taskArray.count) total tasks from Habitica")
-                        
-                        RepeatingTask.makeTasksFromResults(taskArray)
-                        
-                        self.tasksDownloading = false
-                        
-                        completionHandler(error: nil)
+                        if(taskArray.count > 0)
+                        {
+                            //print("Successuflly found \(taskArray.count) total tasks from Habitica")
+                            
+                            RepeatingTask.makeTasksFromResults(taskArray)
+                            
+                            self.tasksDownloading = false
+                            
+                            completionHandler(error: nil)
+                        }
+                    }
+                    else
+                    {
+                        let newError = HabiticaClient.errorForData(nil, jsonData: JSONResult, response: nil, error: error)
+                        completionHandler(error: newError)
                     }
                 }
                 else
                 {
-                    completionHandler(error: NSError(domain: "getTasks parse error", code: 0, userInfo: [NSLocalizedDescriptionKey: "task results were nil"]))
+                    completionHandler(error: NSError(domain: "getTasks parse error", code: 0, userInfo: [NSLocalizedDescriptionKey: "no data array in task results"]))
                 }
             }
         }
@@ -50,7 +57,7 @@ extension HabiticaClient {
     
     func updateExistingTask(uuid: String, apiKey: String, taskID: String, jsonBody: [String: AnyObject], completionHandler: (result: AnyObject?, error: NSError?) -> Void)
     {
-        taskForPutMethod(HabiticaClient.Constants.TASK_METHODS, uuid: uuid, apiKey: apiKey, idForTaskToUpdate: taskID, jsonBody: jsonBody) { JSONResult, error in
+        taskForPutMethod(HabiticaClient.Constants.TASKS_METHOD, uuid: uuid, apiKey: apiKey, idForTaskToUpdate: taskID, jsonBody: jsonBody) { JSONResult, error in
             
             if let error = error
             {
@@ -58,16 +65,24 @@ extension HabiticaClient {
             }
             else
             {
-                if let task = JSONResult as? [String: AnyObject]
+                if let taskData = JSONResult as? [String: AnyObject]
                 {
-                    if let reformattedTask = RepeatingTask.returnSingleTaskFromResults(task)
+                    if let task = taskData[JSONResponseKeys.DATA] as? [String: AnyObject]
                     {
-                        completionHandler(result: reformattedTask, error: nil)
+                        if let reformattedTask = RepeatingTask.returnSingleTaskFromResults(task)
+                        {
+                            completionHandler(result: reformattedTask, error: nil)
+                        }
+                    }
+                    else
+                    {
+                        let newError = HabiticaClient.errorForData(nil, jsonData: JSONResult, response: nil, error: error)
+                        completionHandler(result: nil, error: newError)
                     }
                 }
                 else
                 {
-                    completionHandler(result: nil, error: NSError(domain: "updateExistingTask parse error", code: 0, userInfo: [NSLocalizedDescriptionKey: "task results were nil"]))
+                    completionHandler(result: nil, error: NSError(domain: "updateExistingTask parse error", code: 0, userInfo: [NSLocalizedDescriptionKey: "no data array in task results"]))
                 }
             }
         }
@@ -75,7 +90,7 @@ extension HabiticaClient {
     
     func createNewTask(uuid: String, apiKey: String, jsonBody: [String: AnyObject], completionHandler: (result: AnyObject?, error: NSError?) -> Void)
     {
-        taskForPostMethod(HabiticaClient.Constants.TASK_METHODS, uuid: uuid, apiKey: apiKey, jsonBody: jsonBody) { JSONResult, error in
+        taskForPostMethod(HabiticaClient.Constants.TASKS_USER_METHOD, uuid: uuid, apiKey: apiKey, jsonBody: jsonBody) { JSONResult, error in
             
             if let error = error
             {
@@ -83,16 +98,24 @@ extension HabiticaClient {
             }
             else
             {
-                if let task = JSONResult as? [String: AnyObject]
+                if let taskData = JSONResult as? [String: AnyObject]
                 {
-                    if let reformattedTask = RepeatingTask.returnSingleTaskFromResults(task)
+                    if let task = taskData[JSONResponseKeys.DATA] as? [String: AnyObject]
                     {
-                        completionHandler(result: reformattedTask, error: nil)
+                        if let reformattedTask = RepeatingTask.returnSingleTaskFromResults(task)
+                        {
+                            completionHandler(result: reformattedTask, error: nil)
+                        }
+                    }
+                    else
+                    {
+                        let newError = HabiticaClient.errorForData(nil, jsonData: JSONResult, response: nil, error: error)
+                        completionHandler(result: nil, error: newError)
                     }
                 }
                 else
                 {
-                    completionHandler(result: nil, error: NSError(domain: "createNewTask parse error", code: 0, userInfo: [NSLocalizedDescriptionKey: "task results were nil"]))
+                    completionHandler(result: nil, error: NSError(domain: "updateExistingTask parse error", code: 0, userInfo: [NSLocalizedDescriptionKey: "no data array in task results"]))
                 }
             }
         }
@@ -100,7 +123,7 @@ extension HabiticaClient {
     
     func deleteTask(uuid: String, apiKey: String, taskId: String, completionHandler: (error: NSError?) -> Void)
     {
-        taskForDeleteMethod(HabiticaClient.Constants.TASK_METHODS, uuid: uuid, apiKey: apiKey, idForTaskToUpdate: taskId) { JSONResult, error in
+        taskForDeleteMethod(HabiticaClient.Constants.TASKS_METHOD, uuid: uuid, apiKey: apiKey, idForTaskToUpdate: taskId) { JSONResult, error in
             
             if let error = error
             {

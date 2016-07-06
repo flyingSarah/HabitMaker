@@ -14,8 +14,9 @@ extension HabiticaClient {
     struct Constants
     {
         //URLs
-        static let BASE_URL : String = "https://habitica.com/api/v2/"
-        static let TASK_METHODS : String = "user/tasks/"
+        static let BASE_URL : String = "https://habitica.com/api/v3/"
+        static let TASKS_USER_METHOD : String = "tasks/user/" //for getting all tasks and creating a new task
+        static let TASKS_METHOD : String = "tasks/" //for deleting and updating tasks
     }
     
     //MARK -- Header Argument Keys
@@ -58,9 +59,12 @@ extension HabiticaClient {
     //MARK -- JSON Response Keys
     struct JSONResponseKeys
     {
+        static let DATA = "data"
+        
         //errors
-        static let CODE = "code"
-        static let ERROR_MESSAGE = "err"
+        static let CODE = "success"
+        static let ERROR = "error"
+        static let MESSAGE = "message"
     }
     
     //MARK -- Keys for User Defaults

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		350448FF1C9010EC0036FD8E /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350448FE1C9010EC0036FD8E /* EditViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		350448FF1C9010EC0036FD8E /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350448FE1C9010EC0036FD8E /* EditViewController.swift */; };
 		3508C8EF1C75A2D000CA10B3 /* HabiticaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3508C8EE1C75A2D000CA10B3 /* HabiticaClient.swift */; };
 		3545DFD01C6846AD00B92A68 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3545DFCF1C6846AD00B92A68 /* AppDelegate.swift */; };
 		3545DFD51C6846AD00B92A68 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3545DFD31C6846AD00B92A68 /* Main.storyboard */; };
@@ -213,6 +213,7 @@
 				TargetAttributes = {
 					3545DFC91C6846AD00B92A68 = {
 						CreatedOnToolsVersion = 6.4;
+						DevelopmentTeam = P2HKF64XAQ;
 					};
 					3545DFDE1C6846AD00B92A68 = {
 						CreatedOnToolsVersion = 6.4;
@@ -402,10 +403,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = HabitMaker/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.SarahHowe.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -413,10 +418,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = HabitMaker/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.SarahHowe.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

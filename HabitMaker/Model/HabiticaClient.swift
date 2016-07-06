@@ -48,7 +48,7 @@ class HabiticaClient : NSObject {
             //parse and use the data (happens in completion handler)
             if let error = downloadError
             {
-                let newError = HabiticaClient.errorForData(data, response: response, error: error)
+                let newError = HabiticaClient.errorForData(data, jsonData: nil, response: response, error: error)
                 completionHandler(result: nil, error: newError)
             }
             else
@@ -94,7 +94,7 @@ class HabiticaClient : NSObject {
             //parse and use the data
             if let error = downloadError
             {
-                let newError = HabiticaClient.errorForData(data, response: response, error: error)
+                let newError = HabiticaClient.errorForData(data, jsonData: nil, response: response, error: error)
                 completionHandler(result: nil, error: newError)
             }
             else
@@ -140,7 +140,7 @@ class HabiticaClient : NSObject {
             //parse and use the data
             if let error = downloadError
             {
-                let newError = HabiticaClient.errorForData(data, response: response, error: error)
+                let newError = HabiticaClient.errorForData(data, jsonData: nil, response: response, error: error)
                 completionHandler(result: nil, error: newError)
             }
             else
@@ -173,7 +173,7 @@ class HabiticaClient : NSObject {
             //parse and use the data
             if let error = downloadError
             {
-                let newError = HabiticaClient.errorForData(data, response: response, error: error)
+                let newError = HabiticaClient.errorForData(data, jsonData: nil, response: response, error: error)
                 completionHandler(result: nil, error: newError)
             }
             else
@@ -190,33 +190,40 @@ class HabiticaClient : NSObject {
     //MARK -- Helpers
     
     //given a response with error, see if a status_message is returned, otherwise return the previous error
-    class func errorForData(data: NSData?, response: NSURLResponse?, error: NSError?) -> NSError
+    class func errorForData(data: NSData?, jsonData: AnyObject?, response: NSURLResponse?, error: NSError?) -> NSError
     {
         if let error = error
         {
             return error
         }
+        else if let jsonData = jsonData
+        {
+            return HabiticaClient.errorFromParsedJsonError(jsonData)
+        }
         else if let parsedResult = (try? NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)) as? [String : AnyObject]
         {
-            if let errorMessage = parsedResult[HabiticaClient.JSONResponseKeys.ERROR_MESSAGE] as? String
-            {
-                let userInfo = [NSLocalizedDescriptionKey : errorMessage]
-                
-                if let errorCode = parsedResult[HabiticaClient.JSONResponseKeys.CODE] as? Int
-                {
-                    return NSError(domain: "Habitica Parse Error", code: errorCode, userInfo: userInfo)
-                }
-                
-                return NSError(domain: "Habitica Parse Error", code: 0, userInfo: userInfo)
-            }
+            return HabiticaClient.errorFromParsedJsonError(parsedResult)
         }
         else
         {
             return NSError(domain: "Habitica Client Error", code: 0, userInfo: [NSLocalizedDescriptionKey: "error in errorForData"])
-            //print("error in errorForData")
         }
-        
-        return error!
+    }
+    
+    class func errorFromParsedJsonError(jsonData: AnyObject) -> NSError
+    {
+        if let errorMessage = jsonData[HabiticaClient.JSONResponseKeys.MESSAGE] as? String
+        {
+            let userInfo = [NSLocalizedDescriptionKey : errorMessage]
+            
+            if let errorCode = jsonData[HabiticaClient.JSONResponseKeys.CODE] as? Int
+            {
+                return NSError(domain: "Habitica Error in Parsed Result", code: errorCode, userInfo: userInfo)
+            }
+            
+            return NSError(domain: "Habitica Error in Parsed Result", code: 0, userInfo: userInfo)
+        }
+        return NSError(domain: "Habitica Error in Parsed Result", code: 0, userInfo: [NSLocalizedDescriptionKey : "Erroneous parsed result with no official message occurred"])
     }
     
     //Given raw JSON, return a useable Foundation object
@@ -245,7 +252,7 @@ class HabiticaClient : NSObject {
         {
             if let _ = parsedResult?.valueForKey(HabiticaClient.JSONResponseKeys.CODE) as? String
             {
-                let newError = errorForData(data, response: nil, error: nil)
+                let newError = errorForData(data, jsonData: nil, response: nil, error: nil)
                 completionHandler(result: nil, error: newError)
             }
             else
