@@ -24,12 +24,12 @@ class TaskTableCell: UITableViewCell {
     
     var repeatingTask: RepeatingTask? = nil
     
-    var presentEditViewHandler: ((task: RepeatingTask) -> Void)?
-    var alertErrorHandler: ((title: String, message: String) -> Void)?
+    var presentEditViewHandler: ((_ task: RepeatingTask) -> Void)?
+    var alertErrorHandler: ((_ title: String, _ message: String) -> Void)?
     
     //MARK -- Actions
 
-    @IBAction func checkBoxButtonPressed(sender: UIButton)
+    @IBAction func checkBoxButtonPressed(_ sender: UIButton)
     {
         activityIndicator.startAnimating()
         
@@ -41,41 +41,41 @@ class TaskTableCell: UITableViewCell {
             if(task.completed || (!task.completed && !task.isDaily && task.numRepeats == task.numFinRepeats))
             {
                 //task.completed = false
-                if(task.numRepeats.integerValue > 0)
+                if(task.numRepeats.intValue > 0)
                 {
                     //if the task has a checklist, make a new checklist array with the new correct number of tasks checked
-                    updatesToSend[HabiticaClient.TaskSchemaKeys.CHECKLIST] = RepeatingTask.makeChecklistArray(task.numRepeats.integerValue, numFinRepeats: task.numFinRepeats.integerValue-1)
+                    updatesToSend[HabiticaClient.TaskSchemaKeys.CHECKLIST] = RepeatingTask.makeChecklistArray(task.numRepeats.intValue, numFinRepeats: task.numFinRepeats.intValue-1) as AnyObject
                 }
                 
-                updatesToSend[HabiticaClient.TaskSchemaKeys.COMPLETED] = false
+                updatesToSend[HabiticaClient.TaskSchemaKeys.COMPLETED] = false as AnyObject
             }
             else
             {
                 //task.completed = true
                 checkBox.imageView?.image = UIImage(named: "checkedIcon")
                 
-                if(task.numRepeats.integerValue > 0)
+                if(task.numRepeats.intValue > 0)
                 {
                     //task.numFinRepeats = task.numFinRepeats.integerValue + 1
                     
                     //if the task has a checklist, make a new checklist array with the new correct number of tasks checked
-                    updatesToSend[HabiticaClient.TaskSchemaKeys.CHECKLIST] = RepeatingTask.makeChecklistArray(task.numRepeats.integerValue, numFinRepeats: task.numFinRepeats.integerValue+1)
+                    updatesToSend[HabiticaClient.TaskSchemaKeys.CHECKLIST] = RepeatingTask.makeChecklistArray(task.numRepeats.intValue, numFinRepeats: task.numFinRepeats.intValue+1) as AnyObject
                     
-                    if(task.numRepeats.integerValue == task.numFinRepeats.integerValue+1)
+                    if(task.numRepeats.intValue == task.numFinRepeats.intValue+1)
                     {
                         //if all of the checklist tasks are done, set the full task's completed parameter to true...
                         if(task.isDaily)
                         {
-                            updatesToSend[HabiticaClient.TaskSchemaKeys.COMPLETED] = true
+                            updatesToSend[HabiticaClient.TaskSchemaKeys.COMPLETED] = true as AnyObject
                         }
                         else //...weekly tasks should only be set as complete on sundays (so habitica's scoring policy can work correctly)
                         {
-                            let today = NSDate()
+                            let today = Date()
                             let weekday = weekdayFromDate(today)
                             
                             if(weekday == HabiticaClient.RepeatWeekdayKeys.SUN)
                             {
-                                updatesToSend[HabiticaClient.TaskSchemaKeys.COMPLETED] = true
+                                updatesToSend[HabiticaClient.TaskSchemaKeys.COMPLETED] = true as AnyObject
                             }
                         }
                     }
@@ -83,7 +83,7 @@ class TaskTableCell: UITableViewCell {
                 else
                 {
                     //if there are no repeating tasks, just set the completed parameter to true
-                    updatesToSend[HabiticaClient.TaskSchemaKeys.COMPLETED] = true
+                    updatesToSend[HabiticaClient.TaskSchemaKeys.COMPLETED] = true as AnyObject
                 }
             }
             
@@ -92,24 +92,24 @@ class TaskTableCell: UITableViewCell {
                 
                 if let error = error
                 {
-                    dispatch_async(dispatch_get_main_queue()) {
+                    DispatchQueue.main.async {
                         
                         self.activityIndicator.stopAnimating()
                     }
                     
                     let failureString = error.localizedDescription
-                    self.alertErrorHandler?(title: "Update CheckBox State Error", message: failureString)
+                    self.alertErrorHandler?("Update CheckBox State Error", failureString)
                 }
                 else
                 {
                     if let newTaskData = result as? [String: AnyObject]
                     {
                         task.completed = newTaskData[HabiticaClient.TaskSchemaKeys.COMPLETED] as! Bool
-                        task.numRepeats = newTaskData[RepeatingTask.Keys.NUM_REPEATS] as! Int
-                        task.numFinRepeats = newTaskData[RepeatingTask.Keys.NUM_FIN_REPEATS] as! Int
+                        task.numRepeats = NSNumber(value: newTaskData[RepeatingTask.Keys.NUM_REPEATS] as! Int)
+                        task.numFinRepeats = NSNumber(value: newTaskData[RepeatingTask.Keys.NUM_FIN_REPEATS] as! Int)
                         
                         //save the context after the response from habitica is successful
-                        dispatch_async(dispatch_get_main_queue()) {
+                        DispatchQueue.main.async {
                             
                             CoreDataStackManager.sharedInstance().saveContext()
                             
@@ -118,7 +118,7 @@ class TaskTableCell: UITableViewCell {
                     }
                     else
                     {
-                        self.alertErrorHandler?(title: "Update CheckBox State Error", message: "couldn't convert result to dictionary")
+                        self.alertErrorHandler?("Update CheckBox State Error", "couldn't convert result to dictionary")
                     }
                     
                 }
@@ -131,12 +131,12 @@ class TaskTableCell: UITableViewCell {
     }
     
     
-    @IBAction func editButtonClicked(sender: UIButton)
+    @IBAction func editButtonClicked(_ sender: UIButton)
     {
-        presentEditViewHandler?(task: repeatingTask!)
+        presentEditViewHandler?(repeatingTask!)
     }
     
-    @IBAction func deleteButtonClicked(sender: UIButton)
+    @IBAction func deleteButtonClicked(_ sender: UIButton)
     {
         activityIndicator.startAnimating()
         
@@ -146,19 +146,19 @@ class TaskTableCell: UITableViewCell {
                 
                 if let error = error
                 {
-                    dispatch_async(dispatch_get_main_queue()) {
+                    DispatchQueue.main.async {
                         
                         self.activityIndicator.stopAnimating()
                     }
                     
                     let failureString = error.localizedDescription
-                    self.alertErrorHandler?(title: "Delete Task Error", message: failureString)
+                    self.alertErrorHandler?("Delete Task Error", failureString)
                 }
                 else
                 {
-                    dispatch_async(dispatch_get_main_queue()) {
+                    DispatchQueue.main.async {
                         
-                        CoreDataStackManager.sharedInstance().managedObjectContext.deleteObject(task)
+                        CoreDataStackManager.sharedInstance().managedObjectContext.delete(task)
                         CoreDataStackManager.sharedInstance().saveContext()
                         
                         self.activityIndicator.stopAnimating()
@@ -171,27 +171,27 @@ class TaskTableCell: UITableViewCell {
     
     //MARK -- Helper Functions
     
-    func weekdayFromDate(date: NSDate) -> String
+    func weekdayFromDate(_ date: Date) -> String
     {
-        let calendar = NSCalendar.currentCalendar()
-        let components = calendar.components(.Weekday, fromDate: date)
+        let calendar = Calendar.current
+        let components = (calendar as NSCalendar).components(.weekday, from: date)
         let weekdayNum = components.weekday
         
         switch weekdayNum
         {
-        case 1:
+        case 1?:
             return HabiticaClient.RepeatWeekdayKeys.SUN
-        case 2:
+        case 2?:
             return HabiticaClient.RepeatWeekdayKeys.MON
-        case 3:
+        case 3?:
             return HabiticaClient.RepeatWeekdayKeys.TUES
-        case 4:
+        case 4?:
             return HabiticaClient.RepeatWeekdayKeys.WED
-        case 5:
+        case 5?:
             return HabiticaClient.RepeatWeekdayKeys.THURS
-        case 6:
+        case 6?:
             return HabiticaClient.RepeatWeekdayKeys.FRI
-        case 7:
+        case 7?:
             return HabiticaClient.RepeatWeekdayKeys.SAT
         default:
             print("Task cell's weekdayFromDate func returned default - shouldn't be possible")

@@ -47,17 +47,17 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         //add a little left indent/padding on the text field
         //Found how to do this from this stackoverflow topic: http://stackoverflow.com/questions/7565645/indent-the-text-in-a-uitextfield
         let taskTitleSpacerView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
-        taskTitleField.leftViewMode = UITextFieldViewMode.Always
+        taskTitleField.leftViewMode = UITextFieldViewMode.always
         taskTitleField.leftView = taskTitleSpacerView
         
         repeatStepper.maximumValue = 100
         
         //initialize tap recognizer
-        tapRecognizer = UITapGestureRecognizer(target: self, action: Selector("handleSingleTap:"))
+        tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(EditViewController.handleSingleTap(_:)))
         tapRecognizer!.numberOfTapsRequired = 1
     }
     
-    override func viewWillAppear(animated: Bool)
+    override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
         
@@ -75,7 +75,7 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         {
             makeNewTask = true
             
-            saveButton.enabled = false
+            saveButton.isEnabled = false
             
             if(isDaily)
             {
@@ -92,11 +92,11 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         else
         {
             //this only happens if the edit view is left open and you tab back and forth between task types - the edit view should dissapear when that occurs
-            self.navigationController?.popViewControllerAnimated(true)
+            self.navigationController?.popViewController(animated: true)
         }
     }
     
-    override func viewWillDisappear(animated: Bool)
+    override func viewWillDisappear(_ animated: Bool)
     {
         super.viewWillDisappear(animated)
         
@@ -117,15 +117,15 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
     
     //MARK -- Actions
     
-    @IBAction func titleFieldChanged(sender: UITextField)
+    @IBAction func titleFieldChanged(_ sender: UITextField)
     {
         if(sender.text!.isEmpty)
         {
-            saveButton.enabled = false
+            saveButton.isEnabled = false
         }
         else
         {
-            saveButton.enabled = true
+            saveButton.isEnabled = true
         }
         
         if let task = task
@@ -134,10 +134,10 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         }
         
         
-        updatesToSend[HabiticaClient.TaskSchemaKeys.TEXT] = sender.text!
+        updatesToSend[HabiticaClient.TaskSchemaKeys.TEXT] = sender.text! as AnyObject
     }
     
-    @IBAction func repeatStepperValueChanged(sender: UIStepper)
+    @IBAction func repeatStepperValueChanged(_ sender: UIStepper)
     {
         let repeatValue = Int(sender.value)
         
@@ -148,24 +148,24 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         if let task = task
         {
             //the number of finished repeats shouldn't be greater than the number of repeats
-            if(task.numFinRepeats.integerValue > repeatValue)
+            if(task.numFinRepeats.intValue > repeatValue)
             {
                 numFinRepeats = repeatValue
             }
             else
             {
-                numFinRepeats = task.numFinRepeats.integerValue
+                numFinRepeats = task.numFinRepeats.intValue
             }
             
-            task.numFinRepeats = numFinRepeats
-            task.numRepeats = repeatValue
+            task.numFinRepeats = NSNumber(value: numFinRepeats)
+            task.numRepeats = NSNumber(value: repeatValue)
         }
         
         //set the repeat checklist array and add it to our updates to send
-        updatesToSend[HabiticaClient.TaskSchemaKeys.CHECKLIST] = RepeatingTask.makeChecklistArray(repeatValue, numFinRepeats: numFinRepeats)
+        updatesToSend[HabiticaClient.TaskSchemaKeys.CHECKLIST] = RepeatingTask.makeChecklistArray(repeatValue, numFinRepeats: numFinRepeats) as AnyObject
     }
     
-    @IBAction func prioritySelector(sender: UISegmentedControl)
+    @IBAction func prioritySelector(_ sender: UISegmentedControl)
     {
         let priority = priorityConversionArray[sender.selectedSegmentIndex]
         
@@ -174,10 +174,10 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
             task.priority = priority
         }
         
-        updatesToSend[HabiticaClient.TaskSchemaKeys.PRIORITY] = priority
+        updatesToSend[HabiticaClient.TaskSchemaKeys.PRIORITY] = priority as AnyObject
     }
     
-    @IBAction func save(sender: AnyObject)
+    @IBAction func save(_ sender: AnyObject)
     {
         activityIndicator.startAnimating()
         
@@ -194,13 +194,13 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
             {
                 setWeeklyRepeatDefaults()
                 
-                updatesToSend[HabiticaClient.TaskSchemaKeys.TYPE] = "daily"
+                updatesToSend[HabiticaClient.TaskSchemaKeys.TYPE] = "daily" as AnyObject
                 
                 HabiticaClient.sharedInstance.createNewTask(uuid, apiKey: apiKey, jsonBody: updatesToSend) { result, error in
                     
                     if let error = error
                     {
-                        dispatch_async(dispatch_get_main_queue()) {
+                        DispatchQueue.main.async {
                             
                             self.activityIndicator.stopAnimating()
                         }
@@ -212,7 +212,7 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
                     {
                         if let newTask = result as? [String: AnyObject]
                         {
-                            dispatch_async(dispatch_get_main_queue()) {
+                            DispatchQueue.main.async {
                                 
                                 //create the repeating task for each of the chosen tasks
                                 let _ = RepeatingTask(repeatingTask: newTask, context: CoreDataStackManager.sharedInstance().managedObjectContext)
@@ -221,7 +221,7 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
                                 
                                 self.activityIndicator.stopAnimating()
                                 
-                                self.navigationController?.popViewControllerAnimated(true)
+                                self.navigationController?.popViewController(animated: true)
                             }
                         }
                     }
@@ -233,7 +233,7 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
                     
                     if let error = error
                     {
-                        dispatch_async(dispatch_get_main_queue()) {
+                        DispatchQueue.main.async {
                             
                             self.activityIndicator.stopAnimating()
                         }
@@ -244,13 +244,13 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
                     else
                     {
                         //save the context if the response from habitica is successful
-                        dispatch_async(dispatch_get_main_queue()) {
+                        DispatchQueue.main.async {
                             
                             CoreDataStackManager.sharedInstance().saveContext()
                             
                             self.activityIndicator.stopAnimating()
                             
-                            self.navigationController?.popViewControllerAnimated(true)
+                            self.navigationController?.popViewController(animated: true)
                         }
                     }
                 }
@@ -266,20 +266,20 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
     
     //MARK -- Delegates
     
-    func textViewDidChange(textView: UITextView)
+    func textViewDidChange(_ textView: UITextView)
     {
         if let task = task
         {
             task.notes = textView.text
         }
         
-        updatesToSend[HabiticaClient.TaskSchemaKeys.NOTES] = textView.text
+        updatesToSend[HabiticaClient.TaskSchemaKeys.NOTES] = textView.text as AnyObject
     }
     
     
     //MARK -- Configure Cells
     
-    func populateFields(task: RepeatingTask)
+    func populateFields(_ task: RepeatingTask)
     {
         isDaily = task.isDaily
         
@@ -295,7 +295,7 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         taskTitleField.text = task.text
         repeatStepper.value = task.numRepeats.doubleValue
         repeatNumberBox.text = task.numRepeats.stringValue
-        prioritySelector.selectedSegmentIndex = priorityConversionArray.indexOf(task.priority)!
+        prioritySelector.selectedSegmentIndex = priorityConversionArray.index(of: task.priority)!
         notesTextField.text = task.notes
     }
     
@@ -315,7 +315,7 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
                     HabiticaClient.RepeatWeekdayKeys.THURS: false,
                     HabiticaClient.RepeatWeekdayKeys.FRI: false,
                     HabiticaClient.RepeatWeekdayKeys.SAT: false
-                ]
+                ] as AnyObject
             }
             else
             {
@@ -327,22 +327,22 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
                     HabiticaClient.RepeatWeekdayKeys.THURS: true,
                     HabiticaClient.RepeatWeekdayKeys.FRI: true,
                     HabiticaClient.RepeatWeekdayKeys.SAT: true
-                ]
+                ] as AnyObject
             }
         }
         
-        updatesToSend[HabiticaClient.TaskSchemaKeys.CHECKLIST] = RepeatingTask.makeChecklistArray(Int(repeatStepper.value), numFinRepeats: 0)
+        updatesToSend[HabiticaClient.TaskSchemaKeys.CHECKLIST] = RepeatingTask.makeChecklistArray(Int(repeatStepper.value), numFinRepeats: 0) as AnyObject
     }
     
-    func showAlertController(title: String, message: String)
+    func showAlertController(_ title: String, message: String)
     {
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             
-            let alert: UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
-            let okAction: UIAlertAction = UIAlertAction(title: "OK", style: .Cancel, handler: nil)
+            let alert: UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            let okAction: UIAlertAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
             alert.addAction(okAction)
             
-            self.presentViewController(alert, animated: true, completion: nil)
+            self.present(alert, animated: true, completion: nil)
         }
     }
     
@@ -357,12 +357,12 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         view.removeGestureRecognizer(tapRecognizer!)
     }
     
-    func handleSingleTap(recognizer: UITapGestureRecognizer)
+    @objc func handleSingleTap(_ recognizer: UITapGestureRecognizer)
     {
         view.endEditing(true)
     }
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool
     {
         view.endEditing(true)
         return true
@@ -372,42 +372,42 @@ class EditViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
     func subscribeToKeyboardNotifications()
     {
         //subscribe to keyboardWillShow & keyboardWillHide notifications
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(EditViewController.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(EditViewController.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
     func unsubscribeFromKeyboardNotifications()
     {
         //unsubscribe from keyboardWillShow & keyboardWillHide notifications
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         //NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
     }
     
-    func keyboardWillShow(notification: NSNotification)
+    @objc func keyboardWillShow(_ notification: Notification)
     {
         //shift the view's frame up so that controls are shown
-        if(notesTextField.isFirstResponder())
+        if(notesTextField.isFirstResponder)
         {
             view.frame.origin.y = -getKeyboardHeight(notification)
         }
     }
     
-    func keyboardWillHide(notification: NSNotification)
+    @objc func keyboardWillHide(_ notification: Notification)
     {
         //shift the view's frame back down so that the view is back to its original placement
-        if(notesTextField.isFirstResponder())
+        if(notesTextField.isFirstResponder)
         {
             view.frame.origin.y = 0
         }
     }
     
-    func getKeyboardHeight(notification: NSNotification) -> CGFloat
+    func getKeyboardHeight(_ notification: Notification) -> CGFloat
     {
         //get and return the keyboard's height from the notification
         let userInfo = notification.userInfo
         let keyboardSize = userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue //of CGRect
         
-        return keyboardSize.CGRectValue().height
+        return keyboardSize.cgRectValue.height
     }
 }
 
@@ -415,7 +415,7 @@ extension EditViewController {
     
     func dismissAnyVisibleKeyboards()
     {
-        if(taskTitleField.isFirstResponder() || notesTextField.isFirstResponder())
+        if(taskTitleField.isFirstResponder || notesTextField.isFirstResponder)
         {
             view.endEditing(true)
         }

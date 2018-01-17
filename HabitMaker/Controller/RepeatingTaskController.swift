@@ -37,10 +37,10 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         }
         
         //create the needed bar button items
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("logout:"))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: UIBarButtonItemStyle.plain, target: self, action: #selector(RepeatingTaskController.logout(_:)))
         
-        let refreshButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Refresh, target: self, action: Selector("refreshButtonClicked:"))
-        let addButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: Selector("addTaskButtonClicked:"))
+        let refreshButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.refresh, target: self, action: #selector(RepeatingTaskController.refreshButtonClicked(_:)))
+        let addButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.add, target: self, action: #selector(RepeatingTaskController.addTaskButtonClicked(_:)))
         
         let buttons = [refreshButton, addButton]
         
@@ -49,7 +49,7 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         fetchedResultsController.delegate = self
     }
     
-    override func viewWillAppear(animated: Bool)
+    override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
         
@@ -75,7 +75,7 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         taskTable.reloadData()
     }
     
-    override func viewWillDisappear(animated: Bool)
+    override func viewWillDisappear(_ animated: Bool)
     {
         super.viewWillDisappear(animated)
         
@@ -84,22 +84,22 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
     
     //MARK -- Navigation Bar Actions
     
-    func logout(sender: AnyObject)
+    @objc func logout(_ sender: AnyObject)
     {
         CoreDataStackManager.sharedInstance().deleteAllItemsInContext()
         
-        NSUserDefaults.standardUserDefaults().setValue("", forKey: HabiticaClient.UserDefaultKeys.UUID)
+        UserDefaults.standard.setValue("", forKey: HabiticaClient.UserDefaultKeys.UUID)
         HabiticaClient.sharedInstance.uuid = ""
-        NSUserDefaults.standardUserDefaults().setValue("", forKey: HabiticaClient.UserDefaultKeys.ApiKey)
+        UserDefaults.standard.setValue("", forKey: HabiticaClient.UserDefaultKeys.ApiKey)
         HabiticaClient.sharedInstance.apiKey = ""
-        NSUserDefaults.standardUserDefaults().setBool(false, forKey: HabiticaClient.UserDefaultKeys.UserLoginAvailable)
+        UserDefaults.standard.set(false, forKey: HabiticaClient.UserDefaultKeys.UserLoginAvailable)
         
-        dismissViewControllerAnimated(true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
     
-    func refreshButtonClicked(sender: AnyObject)
+    @objc func refreshButtonClicked(_ sender: AnyObject)
     {
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             
             self.activityIndicator.startAnimating()
         }
@@ -110,7 +110,7 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         for object in fetchedObjects!
         {
             let task = object as! RepeatingTask
-            CoreDataStackManager.sharedInstance().managedObjectContext.deleteObject(task)
+            CoreDataStackManager.sharedInstance().managedObjectContext.delete(task)
         }
         
         CoreDataStackManager.sharedInstance().saveContext()
@@ -123,7 +123,7 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
             
             if let error = error
             {
-                dispatch_async(dispatch_get_main_queue()) {
+                DispatchQueue.main.async {
                     
                     self.activityIndicator.stopAnimating()
                 }
@@ -134,7 +134,7 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
             }
             else
             {
-                dispatch_async(dispatch_get_main_queue(), {
+                DispatchQueue.main.async(execute: {
                     
                     CoreDataStackManager.sharedInstance().saveContext()
                 })
@@ -142,11 +142,11 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         }
     }
     
-    func addTaskButtonClicked(sender: AnyObject)
+    @objc func addTaskButtonClicked(_ sender: AnyObject)
     {
-        dispatch_async(dispatch_get_main_queue(), {
+        DispatchQueue.main.async(execute: {
             
-            let controller = self.storyboard!.instantiateViewControllerWithIdentifier("EditViewController") as! EditViewController
+            let controller = self.storyboard!.instantiateViewController(withIdentifier: "EditViewController") as! EditViewController
             
             controller.isDaily = self.isDailyView
             
@@ -162,12 +162,12 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         return CoreDataStackManager.sharedInstance().managedObjectContext
     }
     
-    lazy var fetchedResultsController: NSFetchedResultsController = {
+    lazy var fetchedResultsController: NSFetchedResultsController<NSFetchRequestResult> = {
         
-        let fetchRequest = NSFetchRequest(entityName: "RepeatingTask")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "RepeatingTask")
         
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: HabiticaClient.TaskSchemaKeys.PRIORITY, ascending: false)]
-        fetchRequest.predicate = NSPredicate(format: "isDaily == %@", NSNumber(bool: self.isDailyView))
+        fetchRequest.predicate = NSPredicate(format: "isDaily == %@", NSNumber(value: self.isDailyView as Bool))
         
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.sharedContext, sectionNameKeyPath: nil, cacheName: nil)
         
@@ -177,19 +177,19 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
     
     //MARK -- Table Behavior
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         let sectionInfo = fetchedResultsController.sections![section]
         
         return sectionInfo.numberOfObjects
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
-        let task = fetchedResultsController.objectAtIndexPath(indexPath) as! RepeatingTask
-        let cell = tableView.dequeueReusableCellWithIdentifier("TaskTableCell") as! TaskTableCell
+        let task = fetchedResultsController.object(at: indexPath) as! RepeatingTask
+        let cell = tableView.dequeueReusableCell(withIdentifier: "TaskTableCell") as! TaskTableCell
         
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             
             self.configureCell(cell, withTask: task)
         }
@@ -197,82 +197,82 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         return cell
     }
     
-    override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
         if(indexPath == tableView.indexPathsForVisibleRows?.last)
         {
-            if(activityIndicator.isAnimating())
+            if(activityIndicator.isAnimating)
             {
                 activityIndicator.stopAnimating()
             }
         }
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-        let task = fetchedResultsController.objectAtIndexPath(indexPath) as! RepeatingTask
+        let task = fetchedResultsController.object(at: indexPath) as! RepeatingTask
         
         showAlertController(task.text, message: task.notes)
     }
     
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath)
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)
     {
         switch (editingStyle)
         {
-        case .Delete:
+        case .delete:
             //here we get the task, then delete it from core data
-            let task = fetchedResultsController.objectAtIndexPath(indexPath) as! RepeatingTask
-            sharedContext.deleteObject(task)
+            let task = fetchedResultsController.object(at: indexPath) as! RepeatingTask
+            sharedContext.delete(task)
             CoreDataStackManager.sharedInstance().saveContext()
         default:
             break
         }
     }
     
-    func controllerWillChangeContent(controller: NSFetchedResultsController)
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>)
     {
         tableView.beginUpdates()
     }
     
-    func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType)
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType)
     {
         switch type
         {
-        case .Insert:
-            tableView.insertSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Fade)
-        case .Delete:
-            tableView.deleteSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Fade)
+        case .insert:
+            tableView.insertSections(IndexSet(integer: sectionIndex), with: .fade)
+        case .delete:
+            tableView.deleteSections(IndexSet(integer: sectionIndex), with: .fade)
         default:
             return
         }
     }
     
-    func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?)
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?)
     {
         switch type
         {
-        case .Insert:
-            tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
-        case .Delete:
-            tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
-        case .Update:
-            let cell = tableView.cellForRowAtIndexPath(indexPath!) as! TaskTableCell
-            let task = controller.objectAtIndexPath(indexPath!) as! RepeatingTask
+        case .insert:
+            tableView.insertRows(at: [newIndexPath!], with: .fade)
+        case .delete:
+            tableView.deleteRows(at: [indexPath!], with: .fade)
+        case .update:
+            let cell = tableView.cellForRow(at: indexPath!) as! TaskTableCell
+            let task = controller.object(at: indexPath!) as! RepeatingTask
             configureCell(cell, withTask: task)
-        case .Move:
-            tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
-            tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
+        case .move:
+            tableView.deleteRows(at: [indexPath!], with: .fade)
+            tableView.insertRows(at: [newIndexPath!], with: .fade)
         }
     }
     
-    func controllerDidChangeContent(controller: NSFetchedResultsController)
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>)
     {
         tableView.endUpdates()
     }
     
     //MARK -- Configure Cell
     
-    func configureCell(cell: TaskTableCell, withTask task: RepeatingTask)
+    func configureCell(_ cell: TaskTableCell, withTask task: RepeatingTask)
     {
         //fill in the components of the task's cell
         cell.repeatingTask = task
@@ -287,18 +287,18 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         }
         
         //weekly tasks need to send a task completed update to habitica if it's sunday and all the repeats items are checked off
-        let today = NSDate()
+        let today = Date()
         let todaysWeekday = cell.weekdayFromDate(today)
         
         if(!task.isDaily && !task.completed && task.numRepeats == task.numFinRepeats && todaysWeekday == HabiticaClient.RepeatWeekdayKeys.SUN)
         {
             cell.activityIndicator.startAnimating()
             
-            HabiticaClient.sharedInstance.updateExistingTask(HabiticaClient.sharedInstance.uuid, apiKey: HabiticaClient.sharedInstance.apiKey, taskID: task.id!, jsonBody: [HabiticaClient.TaskSchemaKeys.COMPLETED: true]) { result, error in
+            HabiticaClient.sharedInstance.updateExistingTask(HabiticaClient.sharedInstance.uuid, apiKey: HabiticaClient.sharedInstance.apiKey, taskID: task.id!, jsonBody: [HabiticaClient.TaskSchemaKeys.COMPLETED: true as AnyObject]) { result, error in
                 
                 if let error = error
                 {
-                    dispatch_async(dispatch_get_main_queue()) {
+                    DispatchQueue.main.async {
                         
                         cell.activityIndicator.stopAnimating()
                     }
@@ -313,7 +313,7 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
                         task.completed = newTaskData[HabiticaClient.TaskSchemaKeys.COMPLETED] as! Bool
                         
                         //save the context after the response from habitica is successful
-                        dispatch_async(dispatch_get_main_queue()) {
+                        DispatchQueue.main.async {
                             
                             CoreDataStackManager.sharedInstance().saveContext()
                         }
@@ -324,7 +324,7 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
                         self.showAlertController("Configure Cell Error", message: "couldn't convert result to dictionary")
                     }
                     
-                    dispatch_async(dispatch_get_main_queue()) {
+                    DispatchQueue.main.async {
                         
                         self.activityIndicator.stopAnimating()
                     }
@@ -335,14 +335,14 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         
         cell.textField.text = task.text
         
-        if(task.numRepeats.integerValue > 1)
+        if(task.numRepeats.intValue > 1)
         {
-            cell.checklistStatusLabel.hidden = false
+            cell.checklistStatusLabel.isHidden = false
             cell.checklistStatusLabel.text = "\(task.numFinRepeats)/\(task.numRepeats)"
         }
         else
         {
-            cell.checklistStatusLabel.hidden = true
+            cell.checklistStatusLabel.isHidden = true
         }
         
         //set the background color based on priority
@@ -361,9 +361,9 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
         //set the completion handler for the cell's "presentEditViewHanlder" so that clicking on the edit button will take you to the edit view
         cell.presentEditViewHandler = { [unowned self] (task: RepeatingTask) -> Void in
             
-            dispatch_async(dispatch_get_main_queue()) {
+            DispatchQueue.main.async {
                 
-                let controller = self.storyboard!.instantiateViewControllerWithIdentifier("EditViewController") as! EditViewController
+                let controller = self.storyboard!.instantiateViewController(withIdentifier: "EditViewController") as! EditViewController
                 controller.task = task
                 controller.isDaily = task.isDaily
                 
@@ -382,21 +382,21 @@ class RepeatingTaskController: UITableViewController, NSFetchedResultsController
     
     func stopActivityIndicator()
     {
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             
             self.activityIndicator.stopAnimating()
         }
     }
     
-    func showAlertController(title: String, message: String)
+    func showAlertController(_ title: String, message: String)
     {
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             
-            let alert: UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
-            let okAction: UIAlertAction = UIAlertAction(title: "OK", style: .Cancel, handler: nil)
+            let alert: UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            let okAction: UIAlertAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
             alert.addAction(okAction)
             
-            self.presentViewController(alert, animated: true, completion: nil)
+            self.present(alert, animated: true, completion: nil)
         }
     }
 }

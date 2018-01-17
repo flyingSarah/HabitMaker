@@ -36,26 +36,26 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         //add a little left indent/padding on the text fields
         //Found how to do this from this stackoverflow topic: http://stackoverflow.com/questions/7565645/indent-the-text-in-a-uitextfield
         let uuidSpacerView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
-        uuidTextField.leftViewMode = UITextFieldViewMode.Always
+        uuidTextField.leftViewMode = UITextFieldViewMode.always
         uuidTextField.leftView = uuidSpacerView
         
         let apiKeySpacerView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
-        apiKeyTextField.leftViewMode = UITextFieldViewMode.Always
+        apiKeyTextField.leftViewMode = UITextFieldViewMode.always
         apiKeyTextField.leftView = apiKeySpacerView
         
         //initialize tap recognizer
-        tapRecognizer = UITapGestureRecognizer(target: self, action: Selector("handleSingleTap:"))
+        tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(LoginViewController.handleSingleTap(_:)))
         tapRecognizer!.numberOfTapsRequired = 1
     }
     
-    override func viewWillAppear(animated: Bool)
+    override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
         
         addKeyboardDismissRecognizer()
         
         //check to see if a login is already stored and if so, go ahead and advance to the next view
-        let userLoginAvailable = NSUserDefaults.standardUserDefaults().boolForKey(HabiticaClient.UserDefaultKeys.UserLoginAvailable)
+        let userLoginAvailable = UserDefaults.standard.bool(forKey: HabiticaClient.UserDefaultKeys.UserLoginAvailable)
         
         if(userLoginAvailable)
         {
@@ -66,12 +66,12 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             //sync data every time you log in by deleting the objects and then re-downloading them
             CoreDataStackManager.sharedInstance().deleteAllItemsInContext()
             
-            HabiticaClient.sharedInstance.uuid = NSUserDefaults.standardUserDefaults().valueForKey(HabiticaClient.UserDefaultKeys.UUID) as! String
+            HabiticaClient.sharedInstance.uuid = UserDefaults.standard.value(forKey: HabiticaClient.UserDefaultKeys.UUID) as! String
             uuidTextField.text = HabiticaClient.sharedInstance.uuid
-            HabiticaClient.sharedInstance.apiKey = NSUserDefaults.standardUserDefaults().valueForKey(HabiticaClient.UserDefaultKeys.ApiKey) as! String
+            HabiticaClient.sharedInstance.apiKey = UserDefaults.standard.value(forKey: HabiticaClient.UserDefaultKeys.ApiKey) as! String
             apiKeyTextField.text = HabiticaClient.sharedInstance.apiKey
             
-            loginButton.enabled = true
+            loginButton.isEnabled = true
             
             loginToHabitica(HabiticaClient.sharedInstance.uuid, apiKey: HabiticaClient.sharedInstance.apiKey)
         }
@@ -84,11 +84,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             apiKeyTextField.text = ""
             HabiticaClient.sharedInstance.apiKey = ""
             
-            loginButton.enabled = false
+            loginButton.isEnabled = false
         }
     }
     
-    override func viewWillDisappear(animated: Bool)
+    override func viewWillDisappear(_ animated: Bool)
     {
         super.viewWillDisappear(animated)
         
@@ -103,9 +103,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     //MARK -- Actions
     
-    @IBAction func loginButtonPressed(sender: UIButton)
+    @IBAction func loginButtonPressed(_ sender: UIButton)
     {
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             
             self.activityIndicator.startAnimating()
         }
@@ -116,49 +116,49 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         loginToHabitica(HabiticaClient.sharedInstance.uuid, apiKey: HabiticaClient.sharedInstance.apiKey)
     }
     
-    @IBAction func textFieldsChanged(sender: UITextField)
+    @IBAction func textFieldsChanged(_ sender: UITextField)
     {
         if(uuidTextField.text!.isEmpty || apiKeyTextField.text!.isEmpty)
         {
-            loginButton.enabled = false
+            loginButton.isEnabled = false
         }
         else
         {
-            loginButton.enabled = true
+            loginButton.isEnabled = true
         }
     }
     
-    @IBAction func signUpButtonPressed(sender: UIButton)
+    @IBAction func signUpButtonPressed(_ sender: UIButton)
     {
         signUp()
     }
     
     func signUp()
     {
-        let url = NSURL(string: "https://habitica.com/static/front")!
-        UIApplication.sharedApplication().openURL(url)
+        let url = URL(string: "https://habitica.com/static/front")!
+        UIApplication.shared.openURL(url)
     }
     
-    @IBAction func infoButtonPressed(sender: UIButton)
+    @IBAction func infoButtonPressed(_ sender: UIButton)
     {
-        let alert: UIAlertController = UIAlertController(title: "Login UUID and API Key...", message: "... can be found in settings/API after signing up on Habitica.com.", preferredStyle: .Alert)
+        let alert: UIAlertController = UIAlertController(title: "Login UUID and API Key...", message: "... can be found in settings/API after signing up on Habitica.com.", preferredStyle: .alert)
         
-        let closeAction: UIAlertAction = UIAlertAction(title: "Close", style: .Cancel, handler: nil)
+        let closeAction: UIAlertAction = UIAlertAction(title: "Close", style: .cancel, handler: nil)
         
-        let signUpAction: UIAlertAction = UIAlertAction(title: "Sign Up", style: .Default) { _ in
+        let signUpAction: UIAlertAction = UIAlertAction(title: "Sign Up", style: .default) { _ in
             
-            dispatch_async(dispatch_get_main_queue()) {
+            DispatchQueue.main.async {
                 
                 self.signUp()
             }
         }
         
-        let findLoginInfo: UIAlertAction = UIAlertAction(title: "Find UUID", style: .Default) { _ in
+        let findLoginInfo: UIAlertAction = UIAlertAction(title: "Find UUID", style: .default) { _ in
             
-            dispatch_async(dispatch_get_main_queue()) {
+            DispatchQueue.main.async {
                 
-                let url = NSURL(string: "https://habitica.com/#/options/settings/api")!
-                UIApplication.sharedApplication().openURL(url)
+                let url = URL(string: "https://habitica.com/#/options/settings/api")!
+                UIApplication.shared.openURL(url)
             }
         }
         
@@ -166,14 +166,14 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         alert.addAction(signUpAction)
         alert.addAction(findLoginInfo)
         
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             
-            self.presentViewController(alert, animated: true, completion: nil)
+            self.present(alert, animated: true, completion: nil)
         }
     }
     
     
-    func loginToHabitica(uuid: String, apiKey: String)
+    func loginToHabitica(_ uuid: String, apiKey: String)
     {
         dismissAnyVisibleKeyboards()
         
@@ -181,9 +181,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             
             if let error = error
             {
-                NSUserDefaults.standardUserDefaults().setBool(false, forKey: HabiticaClient.UserDefaultKeys.UserLoginAvailable)
+                UserDefaults.standard.set(false, forKey: HabiticaClient.UserDefaultKeys.UserLoginAvailable)
                 
-                dispatch_async(dispatch_get_main_queue()) {
+                DispatchQueue.main.async {
                     
                     self.activityIndicator.stopAnimating()
                 }
@@ -194,21 +194,21 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             }
             else
             {
-                NSUserDefaults.standardUserDefaults().setValue(uuid, forKey: HabiticaClient.UserDefaultKeys.UUID)
+                UserDefaults.standard.setValue(uuid, forKey: HabiticaClient.UserDefaultKeys.UUID)
                 HabiticaClient.sharedInstance.uuid = uuid
-                NSUserDefaults.standardUserDefaults().setValue(apiKey, forKey: HabiticaClient.UserDefaultKeys.ApiKey)
+                UserDefaults.standard.setValue(apiKey, forKey: HabiticaClient.UserDefaultKeys.ApiKey)
                 HabiticaClient.sharedInstance.apiKey = apiKey
-                NSUserDefaults.standardUserDefaults().setBool(true, forKey: HabiticaClient.UserDefaultKeys.UserLoginAvailable)
+                UserDefaults.standard.set(true, forKey: HabiticaClient.UserDefaultKeys.UserLoginAvailable)
                 
-                dispatch_async(dispatch_get_main_queue()) {
+                DispatchQueue.main.async {
                     
                     CoreDataStackManager.sharedInstance().saveContext()
                     
                     self.activityIndicator.stopAnimating()
                     
-                    let controller = self.storyboard!.instantiateViewControllerWithIdentifier("TabBarController") as! UITabBarController
+                    let controller = self.storyboard!.instantiateViewController(withIdentifier: "TabBarController") as! UITabBarController
                     
-                    self.presentViewController(controller, animated: true, completion: nil)
+                    self.present(controller, animated: true, completion: nil)
                 }
                 
                 print("Login Complete!")
@@ -217,15 +217,15 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     //MARK -- Helper Functions
-    func showAlertController(title: String, message: String)
+    func showAlertController(_ title: String, message: String)
     {
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             
-            let alert: UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
-            let okAction: UIAlertAction = UIAlertAction(title: "OK", style: .Cancel, handler: nil)
+            let alert: UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            let okAction: UIAlertAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
             alert.addAction(okAction)
             
-            self.presentViewController(alert, animated: true, completion: nil)
+            self.present(alert, animated: true, completion: nil)
         }
     }
     
@@ -240,12 +240,12 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         view.removeGestureRecognizer(tapRecognizer!)
     }
     
-    func handleSingleTap(recognizer: UITapGestureRecognizer)
+    @objc func handleSingleTap(_ recognizer: UITapGestureRecognizer)
     {
         view.endEditing(true)
     }
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool
     {
         view.endEditing(true)
         return true
@@ -256,7 +256,7 @@ extension LoginViewController {
     
     func dismissAnyVisibleKeyboards()
     {
-        if(uuidTextField.isFirstResponder() || apiKeyTextField.isFirstResponder())
+        if(uuidTextField.isFirstResponder || apiKeyTextField.isFirstResponder)
         {
             view.endEditing(true)
         }
